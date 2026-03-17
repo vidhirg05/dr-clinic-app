@@ -1,0 +1,91 @@
+[{
+  "_id": {
+    "$oid": "6952d97ddc5e645313aacb73"
+  },
+  "name": "Paracetamol 500mg",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-12-29T19:41:49.417Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-29T19:41:49.417Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6952d97ddc5e645313aacb74"
+  },
+  "name": "Azithromycin 500mg",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-12-29T19:41:49.419Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-29T19:41:49.419Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6952d97ddc5e645313aacb75"
+  },
+  "name": "Cetirizine 10mg",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-12-29T19:41:49.419Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-29T19:41:49.419Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6952d97ddc5e645313aacb76"
+  },
+  "name": "Pantoprazole 40mg",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-12-29T19:41:49.419Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-29T19:41:49.419Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6952d97ddc5e645313aacb77"
+  },
+  "name": "Metformin 500mg",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-12-29T19:41:49.419Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-29T19:41:49.419Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6952d9d7dc5e645313aacb7b"
+  },
+  "name": "Amoxicillin 500mg",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-12-29T19:43:19.425Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-29T19:43:19.425Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695fab49be6c8dbefde73dab"
+  },
+  "name": "Livogen",
+  "createdAt": {
+    "$date": "2026-01-08T13:04:09.824Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-08T13:04:09.824Z"
+  },
+  "__v": 0
+}]

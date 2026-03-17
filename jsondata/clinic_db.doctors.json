@@ -1,0 +1,66 @@
+[{
+  "_id": {
+    "$oid": "6965e7ecd2c25d9cf6bce729"
+  },
+  "firstName": "Akhil",
+  "middleName": "",
+  "lastName": "Kumar",
+  "mobile": "9999999999",
+  "email": "akhil@gmail.com",
+  "degree": "MBBS",
+  "regNo": "MH123456",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "pin": "400069",
+  "password": "$2b$10$wNBfFAR20XEGDV4W4is9ZOhX6GBMpfVZ1/z0DPn1HJD0b9GYTFUN.",
+  "createdAt": {
+    "$date": "2026-01-13T06:36:28.303Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-14T13:29:59.133Z"
+  },
+  "__v": 1,
+  "clinic": {
+    "closedDays": []
+  }
+},
+{
+  "_id": {
+    "$oid": "69679ad8ef5718c7c2bb2365"
+  },
+  "firstName": "vidhi",
+  "middleName": "",
+  "lastName": "Gurav",
+  "mobile": "8888888888",
+  "email": "vidhigurav05@gmail.com",
+  "degree": "MBBS",
+  "regNo": "MH999999",
+  "city": "Mumbai",
+  "state": "MH",
+  "pin": "400069",
+  "password": "$2b$10$rnFKWin1ME/QsqE8dG5Smep1vVq92EQY8Gegt40Iezacv5YHZqHq.",
+  "clinic": {
+    "name": "Apollo",
+    "phones": "1234567890",
+    "address": "Andheri",
+    "city": "Mumbai",
+    "state": "MH",
+    "pin": "400069",
+    "morningFrom": "09:00",
+    "morningTo": "12:00",
+    "eveningFrom": "17:00",
+    "eveningTo": "20:00",
+    "closedDays": [
+      "Sunday",
+      "Wednesday",
+      "Saturday"
+    ]
+  },
+  "createdAt": {
+    "$date": "2026-01-14T13:32:08.348Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-14T13:32:08.348Z"
+  },
+  "__v": 0
+}]

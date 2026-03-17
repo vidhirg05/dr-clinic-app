@@ -1,0 +1,39 @@
+{
+  "name": "electron",
+  "version": "1.0.0",
+  "description": "Clinic Management App",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "mongoose": "^9.0.2"
+  },
+  "devDependencies": {
+    "electron": "^39.2.7",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.drclinic.app",
+    "productName": "DrClinic",
+    "directories": {
+      "output": "dist_exe" 
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      {
+        "from": "../frontend/clinic-ui/dist",
+        "to": "dist",
+        "filter": ["**/*"]
+      }
+    ]
+  }
+}

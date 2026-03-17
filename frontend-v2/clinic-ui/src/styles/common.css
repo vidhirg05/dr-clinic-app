@@ -1,0 +1,15 @@
+input, select {
+  padding: 8px;
+  margin-bottom: 8px;
+  width: 250px;
+}
+
+button {
+  padding: 8px 12px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+h2, h3 {
+  margin-bottom: 10px;
+}

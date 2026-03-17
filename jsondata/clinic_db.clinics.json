@@ -1,0 +1,28 @@
+[{
+  "_id": {
+    "$oid": "6967375bc73ae9338a060de6"
+  },
+  "name": "",
+  "phones": [
+    ""
+  ],
+  "address": "",
+  "city": "",
+  "state": "",
+  "pin": "",
+  "timings": {
+    "morning": {
+      "from": "09:00",
+      "to": "14:00"
+    },
+    "evening": {
+      "from": "17:00",
+      "to": "21:00"
+    }
+  },
+  "closedDays": [],
+  "doctor": {
+    "$oid": "6967375bc73ae9338a060de4"
+  },
+  "__v": 0
+}]

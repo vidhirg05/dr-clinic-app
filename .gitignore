@@ -1,0 +1,21 @@
+# Node dependencies
+node_modules/
+
+# Electron build files
+dist/
+out/
+
+
+dist_exe/
+*.exe
+frontend-v2/clinic-ui/dist/
+electron/dist_exe/
+
+
+# Environment files
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

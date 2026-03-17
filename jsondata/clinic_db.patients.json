@@ -1,0 +1,83 @@
+[{
+  "_id": {
+    "$oid": "69600f866ade90f8e252770a"
+  },
+  "fullName": "Test Patient",
+  "age": 30,
+  "gender": "Female",
+  "dob": "1994-06-09",
+  "mobile": "5555555555",
+  "email": "tp@gmail.com",
+  "address": "Andheri",
+  "city": "Mumbai",
+  "state": "MH",
+  "pinCode": "400069",
+  "bloodGroup": "A+",
+  "allergies": "Dust",
+  "doctorNotes": "",
+  "prescription": [
+    {
+      "medicine": "Livogen",
+      "mor": false,
+      "aft": true,
+      "eve": false,
+      "night": true,
+      "_id": {
+        "$oid": "69600f866ade90f8e252770b"
+      }
+    },
+    {
+      "medicine": "Paracetamol 500mg",
+      "mor": true,
+      "aft": true,
+      "eve": false,
+      "night": true,
+      "_id": {
+        "$oid": "69600f866ade90f8e252770c"
+      }
+    }
+  ],
+  "vitals": {
+    "height": "190",
+    "weight": "58",
+    "temperature": "37",
+    "pulse": "25",
+    "respirations": "12",
+    "bp": "82",
+    "_id": {
+      "$oid": "69600f866ade90f8e252770d"
+    }
+  },
+  "createdAt": {
+    "$date": "2026-01-08T20:11:50.754Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-08T21:44:00.617Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69635de28dce74d3b26a05a3"
+  },
+  "fullName": "Swati",
+  "age": 22,
+  "gender": "F",
+  "dob": "2003-04-05",
+  "mobile": "8888888888",
+  "email": "s@gmail.com",
+  "address": "Indore",
+  "city": "Lucknow",
+  "state": "UP",
+  "pinCode": "789541",
+  "bloodGroup": "A+",
+  "allergies": "Dairy Prods",
+  "prescription": [],
+  "createdAt": {
+    "$date": "2026-01-11T08:22:58.808Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-11T08:22:58.808Z"
+  },
+  "__v": 0
+}]

@@ -1,0 +1,205 @@
+[{
+  "_id": {
+    "$oid": "69629d6c4610b0f89c3828e7"
+  },
+  "patientId": {
+    "$oid": "69600f866ade90f8e252770a"
+  },
+  "vitals": {
+    "height": "180",
+    "weight": "57",
+    "bp": "82",
+    "pulse": "25",
+    "temperature": "37",
+    "respirations": "12",
+    "bmi": "17.59"
+  },
+  "medical": {
+    "doctorNotes": "cvnksj",
+    "prescription": [
+      {
+        "medicine": "Cetirizine 10mg",
+        "mor": true,
+        "aft": false,
+        "eve": false,
+        "night": true,
+        "_id": {
+          "$oid": "69629d6c4610b0f89c3828e8"
+        }
+      },
+      {
+        "medicine": "Livogen",
+        "mor": false,
+        "aft": false,
+        "eve": false,
+        "night": true,
+        "_id": {
+          "$oid": "69629d6c4610b0f89c3828e9"
+        }
+      }
+    ]
+  },
+  "createdAt": {
+    "$date": "2026-01-10T18:41:48.313Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-10T18:41:48.313Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6962a3994610b0f89c38291c"
+  },
+  "patientId": {
+    "$oid": "69600f866ade90f8e252770a"
+  },
+  "vitals": {
+    "height": "",
+    "weight": "",
+    "bp": "",
+    "pulse": "",
+    "temperature": "",
+    "respirations": "",
+    "bmi": "--"
+  },
+  "medical": {
+    "doctorNotes": "",
+    "prescription": [
+      {
+        "medicine": "Azithromycin 500mg",
+        "mor": true,
+        "aft": false,
+        "eve": false,
+        "night": false,
+        "_id": {
+          "$oid": "6962a3994610b0f89c38291d"
+        }
+      }
+    ]
+  },
+  "createdAt": {
+    "$date": "2026-01-10T19:08:09.729Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-10T19:08:09.729Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6962a3e74610b0f89c382923"
+  },
+  "patientId": {
+    "$oid": "69600f866ade90f8e252770a"
+  },
+  "vitals": {
+    "height": "",
+    "weight": "",
+    "bp": "",
+    "pulse": "",
+    "temperature": "",
+    "respirations": "",
+    "bmi": "--"
+  },
+  "medical": {
+    "doctorNotes": "",
+    "prescription": [
+      {
+        "medicine": "Livogen",
+        "mor": false,
+        "aft": false,
+        "eve": true,
+        "night": true,
+        "_id": {
+          "$oid": "6962a3e74610b0f89c382924"
+        }
+      }
+    ]
+  },
+  "createdAt": {
+    "$date": "2026-01-10T19:09:27.887Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-10T19:09:27.887Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6962a584e4a8a5c82ec46278"
+  },
+  "patientId": {
+    "$oid": "69600f866ade90f8e252770a"
+  },
+  "vitals": {
+    "height": "",
+    "weight": "",
+    "bp": "",
+    "pulse": "",
+    "temperature": "",
+    "respirations": "",
+    "bmi": "--"
+  },
+  "medical": {
+    "doctorNotes": "bad health",
+    "prescription": [
+      {
+        "medicine": "Paracetamol 500mg",
+        "mor": true,
+        "aft": false,
+        "eve": false,
+        "night": true,
+        "_id": {
+          "$oid": "6962a584e4a8a5c82ec46279"
+        }
+      }
+    ]
+  },
+  "createdAt": {
+    "$date": "2026-01-10T19:16:20.066Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-10T19:16:20.066Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69635de28dce74d3b26a05a5"
+  },
+  "patientId": {
+    "$oid": "69635de28dce74d3b26a05a3"
+  },
+  "vitals": {
+    "height": "180",
+    "weight": "40",
+    "bp": "80",
+    "pulse": "25",
+    "temperature": "37",
+    "respirations": "12",
+    "bmi": "12.35"
+  },
+  "medical": {
+    "doctorNotes": "Lactose Intolerant",
+    "prescription": [
+      {
+        "medicine": "Livogen",
+        "mor": true,
+        "aft": false,
+        "eve": false,
+        "night": true,
+        "_id": {
+          "$oid": "69635de28dce74d3b26a05a6"
+        }
+      }
+    ]
+  },
+  "createdAt": {
+    "$date": "2026-01-11T08:22:58.835Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-11T08:22:58.835Z"
+  },
+  "__v": 0
+}]
