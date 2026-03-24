@@ -3,7 +3,7 @@ const path = require("path");
 
 const preloadPath = path.join(__dirname, "preload.js");
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://dr-clinic-app.onrender.com";
 
 
 
@@ -47,7 +47,7 @@ function createWindow() {
     mainWindow.webContents.openDevTools(); 
   } else {
     // PRODUCTION: Load the bundled files inside the .exe
-    const prodPath = path.join(__dirname, 'dist', 'index.html');
+    const prodPath = path.join(__dirname, 'frontend-dist', 'index.html');
     mainWindow.loadFile(prodPath).catch((err) => {
       console.error("Path error inside .exe:", err);
     });
@@ -124,9 +124,13 @@ ipcMain.handle("open-reset-window", () => {
       preload: preloadPath,
     },
   });
-
-  win.loadURL(`${API_URL}/#/request-reset`);
-});
+  if (!app.isPackaged) {
+      win.loadURL("http://localhost:5173/#/request-reset");
+    } else {
+      // In production, load the local file with the #hash route
+      win.loadFile(path.join(__dirname, 'frontend-dist/index.html'), { hash: 'request-reset' });
+    }
+  });
 
 
 /* ================= CHANGE PASSWORD WINDOW ================= */
