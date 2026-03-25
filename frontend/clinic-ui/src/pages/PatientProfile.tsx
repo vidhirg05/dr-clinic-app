@@ -150,11 +150,11 @@ export default function PatientProfile() {
   },
 
   followUp: {
-    number: "",
-    type: "Days", // Days, Weeks, Months
-    date: "",
-    notes: ""
-  },
+    number: "",
+    type: "Days",
+    notes: ""
+  },
+  followUpDate: "",
 
   fees: {
   visitCharges: "",
@@ -523,6 +523,31 @@ const handlePatientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   }, 300);
 };
 
+const handleFollowUpChange = (name, value) => {
+  let updatedFollowUp = { ...form.followUp };
+
+  // Update the specific field
+  if (name === "followUp.number") updatedFollowUp.number = value;
+  if (name === "followUp.type") updatedFollowUp.type = value;
+
+  let calculatedDate = form.followUpDate;
+
+  // Auto-calculate logic
+  const num = parseInt(updatedFollowUp.number);
+  if (!isNaN(num) && num > 0) {
+    const d = new Date();
+    if (updatedFollowUp.type === "Days") d.setDate(d.getDate() + num);
+    if (updatedFollowUp.type === "Weeks") d.setDate(d.getDate() + num * 7);
+    if (updatedFollowUp.type === "Months") d.setMonth(d.getMonth() + num);
+    calculatedDate = d.toISOString().split("T")[0];
+  }
+
+  setForm({
+    ...form,
+    followUp: updatedFollowUp,
+    followUpDate: calculatedDate
+  });
+};
 const openFitnessCertificateForm = () => {
   if (!doctor) return alert("Doctor data missing.");
 
@@ -1192,85 +1217,86 @@ onClick={() => {
           </div>
           </div>
 
-          {/* 6. FOLLOW-UP CARD  */}
-      <div style={styles.prescriptionCard}>
-        <h3 style={{ marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>Follow-up</h3>
+          {/* 6. FOLLOW-UP CARD */}
+          <div style={styles.prescriptionCard}>
+            <h3 style={{ marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>Follow-up</h3>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-          
-          {/* Left Column: Follow-up After logic */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-            <div style={{ display: "flex", alignItems: "end", gap: "10px" }}>
-              <div style={{ flex: 1 }}>
-                <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
-                  Follow-up After
-                </label>
-                <input
-                  type="number"
-                  name="followUp.number"
-                  value={form.followUp.number}
-                  onChange={handleChange}
-                  style={{ ...styles.input, width: "70%" }}
-                />
-              </div>
-              <div style={{ flex: 1 }}>
-                <select
-                  name="followUp.type"
-                  value={form.followUp.type}
-                  onChange={handleChange}
-                  style={{ ...styles.input, width: "70%" }}
-                >
-                  <option value="Days">Days</option>
-                  <option value="Weeks">Weeks</option>
-                  <option value="Months">Months</option>
-                </select>
-              </div>
-            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+              
+              {/* Left Column: Follow-up After logic */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                <div style={{ display: "flex", alignItems: "end", gap: "10px" }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
+                      Follow-up After
+                    </label>
+                    <input
+                      type="number"
+                      value={form.followUp?.number || ""}
+                      onChange={(e) => handleFollowUpChange("followUp.number", e.target.value)}
+                      style={{ ...styles.input, width: "70%" }}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <select
+                      value={form.followUp?.type || "Days"}
+                      onChange={(e) => handleFollowUpChange("followUp.type", e.target.value)}
+                      style={{ ...styles.input, width: "70%" }}
+                    >
+                      <option value="Days">Days</option>
+                      <option value="Weeks">Weeks</option>
+                      <option value="Months">Months</option>
+                    </select>
+                  </div>
+                </div>
 
-            <div>
-              <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
-                Follow-up Date
-              </label>
-              <input
-                type="date"
-                name="followUp.date"
-                value={form.followUp.date}
-                onChange={handleChange}
-                style={{ ...styles.input, width: "70%" }}
-              />
-              {form.followUp.date && (
-                <p style={{ fontSize: "12px", color: "#64748b", marginTop: "4px" }}>
-                  Scheduled on: <strong>{new Date(form.followUp.date).toLocaleDateString('en-IN', { weekday: 'long' })}</strong>
-                </p>
-              )}
-            </div>
-          </div>
+                <div>
+                  <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
+                    Follow-up Date
+                  </label>
+                  <input
+                    type="date"
+                    value={form.followUpDate || ""} 
+                    onChange={(e) => setForm({ ...form, followUpDate: e.target.value })}
+                    style={{ ...styles.input, width: "70%" }}
+                  />
+                  
+                  {form.followUpDate && (
+                    <p style={{ fontSize: "12px", color: "#64748b", marginTop: "4px" }}>
+                      Scheduled on: <strong>{new Date(form.followUpDate).toLocaleDateString('en-IN', { weekday: 'long' })}</strong>
+                    </p>
+                  )}
+                </div>
+              </div>
 
-          {/* Right Column: Follow-up Notes */}
-          <div>
-            <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
-              Follow-up Note
-            </label>
-            <textarea
-              name="followUp.notes"
-              value={form.followUp.notes}
-              onChange={handleChange}
-              placeholder="Enter specific instructions for follow-up..."
-              style={{ 
-                ...styles.input, 
-                height: "105px", 
-                resize: "none",
-                padding: "10px",
-                fontFamily: "inherit",
-                width: "90%",
-              }}
-            />
-            <p style={{ textAlign: "right", fontSize: "11px", color: "#94a3b8" }}>
-              (Remaining: {120 - (form.followUp.notes?.length || 0)})
-            </p>
-          </div>
-        </div>
-      </div>
+              {/* Right Column: Follow-up Notes */}
+              <div>
+                <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
+                  Follow-up Note
+                </label>
+                <textarea
+                  name="followUp.notes"
+                  value={form.followUp?.notes || ""}
+                  onChange={(e) => setForm({
+                    ...form,
+                    followUp: { ...form.followUp, notes: e.target.value }
+                  })}
+                  placeholder="Enter specific instructions for follow-up..."
+                  style={{ 
+                    ...styles.input, 
+                    height: "105px", 
+                    resize: "none",
+                    padding: "10px",
+                    fontFamily: "inherit",
+                    width: "90%",
+                  }}
+                />
+                <p style={{ textAlign: "right", fontSize: "11px", color: "#94a3b8" }}>
+                  (Remaining: {120 - (form.followUp?.notes?.length || 0)})
+                </p>
+              </div>
+            </div>
+          </div>
 
       {/* 7. FEES / CHARGES (MyOPD style) */}
       <div style={styles.prescriptionCard}>
@@ -1470,7 +1496,7 @@ onClick={() => {
 
         {visits.length === 0 && <p style={{ color: "#64748b" }}>No previous visits found.</p>}
 
-        {[...visits].reverse().map((v) => (
+        {visits.map((v) => (
           <div
             key={v._id}
             style={{

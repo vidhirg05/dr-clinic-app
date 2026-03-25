@@ -510,6 +510,8 @@ useEffect(() => {
     return (weightKg / (heightM * heightM)).toFixed(2);
   };
 
+
+
  /* const handleHistoryChange = (e: any) => {
   const { name, checked } = e.target;
   setForm({
@@ -527,6 +529,7 @@ useEffect(() => {
     (updated[index] as any)[key] = value;
     setForm({ ...form, prescription: updated });
   };
+
   const addMedicineRow = () => {
   setForm((prev) => ({
     ...prev,
@@ -541,7 +544,6 @@ useEffect(() => {
     ],
   }));
 };
-
 
   const savePatient = async () => {
   try {
