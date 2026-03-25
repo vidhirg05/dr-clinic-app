@@ -523,6 +523,239 @@ const handlePatientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   }, 300);
 };
 
+const openFitnessCertificateForm = () => {
+  if (!doctor) return alert("Doctor data missing.");
+
+  const certWindow = window.open("", "_blank", "width=800,height=850");
+  if (!certWindow) return;
+
+  const pName = form.fullName || "";
+  const pAge = form.age || "";
+  const pGender = form.gender || "";
+  const pAddress = form.address || "";
+  const today = new Date().toISOString().split('T')[0];
+
+  certWindow.document.write(`
+    <html>
+      <head>
+        <title>Fitness Certificate Form</title>
+        <style>
+          body { font-family: 'Segoe UI', sans-serif; padding: 30px; background: #f1f5f9; color: #1e293b; }
+          .form-container { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+          h2 { border-bottom: 2px solid #2563eb; padding-bottom: 10px; color: #2563eb; }
+          .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+          .field { display: flex; flexDirection: column; gap: 5px; }
+          label { font-weight: 600; font-size: 14px; color: #64748b; }
+          input, textarea { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%; box-sizing: border-box; }
+          .actions { margin-top: 30px; display: flex; gap: 15px; justify-content: flex-end; }
+          .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+          .btn-preview { background: #64748b; color: white; }
+          .btn-print { background: #2563eb; color: white; }
+        </style>
+      </head>
+      <body>
+        <div class="form-container">
+          <h2>Fitness Certificate Details</h2>
+          <div class="row">
+            <div class="field"><label>Patient Name</label><input type="text" id="pName" value="${pName}"></div>
+            <div class="field"><label>Date of Certificate</label><input type="date" id="certDate" value="${today}"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>Age</label><input type="text" id="pAge" value="${pAge}"></div>
+            <div class="field"><label>Gender</label><input type="text" id="pGender" value="${pGender}"></div>
+          </div>
+          <div class="field" style="margin-top:10px;">
+            <label>Address</label>
+            <textarea id="pAddress" rows="2">${pAddress}</textarea>
+          </div>
+          <div class="field" style="margin-top:15px;">
+            <label>Fitness Statement (Fit to resume from:)</label>
+            <input type="date" id="fitDate" value="${form.followUp.date || today}">
+          </div>
+          <div class="field" style="margin-top:15px;">
+            <label>Remarks / Clinical Findings</label>
+            <textarea id="remarks" rows="3">${form.referral.reason || ""}</textarea>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-preview" onclick="generatePreview(false)">Preview</button>
+            <button class="btn btn-print" onclick="generatePreview(true)">Print</button>
+          </div>
+        </div>
+
+        <script>
+          function generatePreview(shouldPrint) {
+            const data = {
+              name: document.getElementById('pName').value,
+              date: document.getElementById('certDate').value,
+              age: document.getElementById('pAge').value,
+              gender: document.getElementById('pGender').value,
+              address: document.getElementById('pAddress').value,
+              fitDate: document.getElementById('fitDate').value,
+              remarks: document.getElementById('remarks').value,
+              clinicName: "${doctor.clinic?.name || 'Clinic'}",
+              clinicAddr: "${doctor.clinic?.address || 'Address'}",
+              drName: "Dr. ${doctor.firstName} ${doctor.lastName}",
+              regNo: "${doctor.regNo || ''}"
+            };
+
+            const previewWindow = window.open("", "_blank", "width=850,height=900");
+            const html = \`
+              <html>
+                <head>
+                  <style>
+                    body { font-family: 'Times New Roman', serif; padding: 50px; line-height: 1.6; }
+                    .header { text-align: center; border-bottom: 2px solid black; margin-bottom: 30px; }
+                    .title { text-align: center; text-decoration: underline; font-size: 22px; font-weight: bold; margin: 30px 0; }
+                    .sig { margin-top: 80px; float: right; text-align: center; }
+                  </style>
+                </head>
+                <body>
+                  <div class="header"><h1>\${data.clinicName}</h1><p>\${data.clinicAddr}</p></div>
+                  <div class="title">MEDICAL FITNESS CERTIFICATE</div>
+                  <p>Date: \${data.date}</p>
+                  <p>This is to certify that I have examined <b>\${data.name}</b>, \${data.age}Y/\${data.gender}, 
+                  residing at \${data.address}.</p>
+                  <p>I find them clinically fit to resume their duties/activities from <b>\${data.fitDate}</b>.</p>
+                  <p>Remarks: \${data.remarks}</p>
+                  <div class="sig"><div style="border-top:1px solid black; width:200px;"></div><b>\${data.drName}</b><br>Reg: \${data.regNo}</div>
+                </body>
+              </html>\`;
+            
+            previewWindow.document.write(html);
+            previewWindow.document.close();
+            if(shouldPrint) {
+              setTimeout(() => { previewWindow.focus(); previewWindow.print(); }, 200);
+            }
+          }
+        </script>
+      </body>
+    </html>
+  `);
+  certWindow.document.close();
+};
+
+const openSicknessCertificateForm = () => {
+  if (!doctor) return alert("Doctor data missing.");
+
+  const certWindow = window.open("", "_blank", "width=800,height=850");
+  if (!certWindow) return;
+
+  const pName = form.fullName || "";
+ /* const pAge = form.age || "";
+  const pGender = form.gender || "";
+  const pAddress = form.address || "";*/
+  const today = new Date().toISOString().split('T')[0];
+
+  certWindow.document.write(`
+    <html>
+      <head>
+        <title>Sickness Certificate Form</title>
+        <style>
+          body { font-family: 'Segoe UI', sans-serif; padding: 30px; background: #f1f5f9; color: #1e293b; }
+          .form-container { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+          h2 { border-bottom: 2px solid #e11d48; padding-bottom: 10px; color: #e11d48; }
+          .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+          .field { display: flex; flex-direction: column; gap: 5px; }
+          label { font-weight: 600; font-size: 14px; color: #64748b; }
+          input, textarea { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%; box-sizing: border-box; }
+          .actions { margin-top: 30px; display: flex; gap: 15px; justify-content: flex-end; }
+          .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+          .btn-preview { background: #64748b; color: white; }
+          .btn-print { background: #e11d48; color: white; }
+        </style>
+      </head>
+      <body>
+        <div class="form-container">
+          <h2>Sickness Certificate Details</h2>
+          <div class="row">
+            <div class="field"><label>Patient Name</label><input type="text" id="pName" value="${pName}"></div>
+            <div class="field"><label>Certificate Date</label><input type="date" id="certDate" value="${today}"></div>
+          </div>
+          
+          <div class="field" style="margin-top:10px;">
+            <label>Diagnosis / Nature of Illness</label>
+            <input type="text" id="diagnosis" placeholder="e.g. Viral Fever, Acute Gastritis" value="${form.referral.reason || ""}">
+          </div>
+
+          <div class="row" style="margin-top:15px;">
+            <div class="field"><label>Rest From Date</label><input type="date" id="fromDate" value="${today}"></div>
+            <div class="field"><label>Rest To Date (Inclusive)</label><input type="date" id="toDate" value="${form.followUp.date || ""}"></div>
+          </div>
+
+          <div class="field" style="margin-top:15px;">
+            <label>Additional Advice (Optional)</label>
+            <textarea id="advice" rows="2">Complete physical rest and medication as prescribed.</textarea>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-preview" onclick="generateSicknessPreview(false)">Preview</button>
+            <button class="btn btn-print" onclick="generateSicknessPreview(true)">Print</button>
+          </div>
+        </div>
+
+        <script>
+          function generateSicknessPreview(shouldPrint) {
+            const data = {
+              name: document.getElementById('pName').value,
+              date: document.getElementById('certDate').value,
+              diagnosis: document.getElementById('diagnosis').value,
+              fromDate: document.getElementById('fromDate').value,
+              toDate: document.getElementById('toDate').value,
+              advice: document.getElementById('advice').value,
+              clinicName: "${doctor.clinic?.name || 'Clinic'}",
+              clinicAddr: "${doctor.clinic?.address || 'Address'}",
+              drName: "Dr. ${doctor.firstName} ${doctor.lastName}",
+              regNo: "${doctor.regNo || ''}"
+            };
+
+            const previewWindow = window.open("", "_blank", "width=850,height=900");
+            const html = \`
+              <html>
+                <head>
+                  <style>
+                    body { font-family: 'Times New Roman', serif; padding: 60px; line-height: 1.8; }
+                    .header { text-align: center; border-bottom: 2px solid black; margin-bottom: 40px; padding-bottom: 10px; }
+                    .title { text-align: center; text-decoration: underline; font-size: 24px; font-weight: bold; margin: 30px 0; }
+                    .content { text-align: justify; font-size: 18px; }
+                    .sig { margin-top: 100px; float: right; text-align: center; }
+                  </style>
+                </head>
+                <body>
+                  <div class="header">
+                    <h1 style="margin:0;">\${data.clinicName}</h1>
+                    <p style="margin:5px;">\${data.clinicAddr}</p>
+                  </div>
+                  <div class="title">SICKNESS CERTIFICATE</div>
+                  <div class="content">
+                    <p>Date: <b>\${data.date}</b></p>
+                    <p>This is to certify that <b>\${data.name}</b> is under my treatment for <b>\${data.diagnosis || "Medical Illness"}</b>.</p>
+                    <p>I am of the opinion that they require rest for the recovery of their health for a period of 
+                    <b>\${Math.ceil((new Date(data.toDate) - new Date(data.fromDate)) / (1000 * 60 * 60 * 24)) + 1} days</b>, 
+                    starting from <b>\${data.fromDate}</b> to <b>\${data.toDate}</b> inclusive.</p>
+                    <p>Advice: \${data.advice}</p>
+                  </div>
+                  <div class="sig">
+                    <div style="border-top:1px solid black; width:220px; margin-bottom:5px;"></div>
+                    <b>\${data.drName}</b><br>
+                    Reg No: \${data.regNo}
+                  </div>
+                </body>
+              </html>\`;
+            
+            previewWindow.document.write(html);
+            previewWindow.document.close();
+            if(shouldPrint) {
+              setTimeout(() => { previewWindow.focus(); previewWindow.print(); }, 250);
+            }
+          }
+        </script>
+      </body>
+    </html>
+  `);
+  certWindow.document.close();
+};
+
  const saveVisit = async () => {
   if (!id) return;
   setSaving(true);
@@ -1196,7 +1429,15 @@ onClick={() => {
                   e.currentTarget.style.color = "#475569";
                   e.currentTarget.style.borderColor = "#e2e8f0";
                 }}
-                onClick={() => alert(`Generating ${cert.label}...`)}
+                onClick={() => {
+                  if (cert.label === "Fitness Certificate") {
+                    openFitnessCertificateForm();
+                  } else if (cert.label === "Sickness Certificate" || cert.label === "Medical Certificate") {
+                    openSicknessCertificateForm();
+                  } else {
+                    alert(`Generating ${cert.label}...`);
+                  }
+                }}
               >
                 <span>{cert.icon}</span>
                 <span>{cert.label}</span>
@@ -1207,6 +1448,7 @@ onClick={() => {
           <p style={{ margin: "10px 0 0 10px", fontSize: "12px", color: "#94a3b8", fontStyle: "italic" }}>
             * Select a link to generate a pre-filled document based on current clinical findings.
           </p>
+
 
 
       {/* 9. SAVE VISIT BUTTON */}
