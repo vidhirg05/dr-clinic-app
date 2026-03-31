@@ -32,24 +32,22 @@ function createWindow() {
       preload: preloadPath,
       contextIsolation: true,
       nodeIntegration: false,
-      webSecurity: false, // Keep this false for now to allow local API testing
+      webSecurity: false, 
     },
   });
-
-  const isDev = !app.isPackaged; // Better name for development check
+  mainWindow.webContents.openDevTools();
+  const isDev = !app.isPackaged;
 
   if (isDev) {
-    // 1. Point Electron to your Vite Dev Server
-    // This allows "Hot Module Replacement" (instant UI updates)
-    mainWindow.loadURL("http://localhost:5173"); 
+    mainWindow.loadURL("http://localhost:5173");
     
-    // 2. Open DevTools automatically so you can see console errors
-    mainWindow.webContents.openDevTools(); 
   } else {
-    // PRODUCTION: Load the bundled files inside the .exe
-    const prodPath = path.join(__dirname, 'frontend-dist', 'index.html');
-    mainWindow.loadFile(prodPath).catch((err) => {
-      console.error("Path error inside .exe:", err);
+    // Corrected production path logic
+    const indexPath = path.join(__dirname, 'frontend-dist', 'index.html');
+    
+    // Using loadFile is safer for local files in packaged apps
+    mainWindow.loadFile(indexPath).catch((err) => {
+      console.error("Failed to load index.html:", err);
     });
   }
 }
@@ -145,20 +143,29 @@ ipcMain.handle("open-change-window", () => {
     width: 480,
     height: 420,
     modal: true,
-    parent: mainWindow,
+    // Safely check if mainWindow exists before assigning as parent
+    parent: mainWindow || null, 
     webPreferences: {
       preload: preloadPath,
       contextIsolation: true,
+      nodeIntegration: false, // Recommended for security
     },
   });
 
-  changeWindow.loadURL(`${API_URL}/#/change-password`);
+  if (!app.isPackaged) {
+    // Development mode
+    changeWindow.loadURL("http://localhost:5173/#/change-password");
+  } else {
+    // Production mode using the safer .loadFile method with hash
+    changeWindow.loadFile(path.join(__dirname, 'frontend-dist', 'index.html'), { 
+      hash: 'change-password' 
+    });
+  } // <--- This was the missing brace!
 
   changeWindow.on("closed", () => {
     changeWindow = null;
   });
 });
-
 /* ================= CLOSE APP ================= */
 
 ipcMain.handle("close-app", () => {

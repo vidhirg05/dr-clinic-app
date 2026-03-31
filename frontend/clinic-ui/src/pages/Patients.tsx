@@ -369,12 +369,12 @@ export default function Patients() {
   urgency: "Normal",   // Normal, Urgent, Emergency
   },
 
-  followUp: {
-    number: "",
-    type: "Days", // Days, Weeks, Months
-    date: "",
-    notes: ""
+  followUp: { 
+    number: "", 
+    type: "Days",
+    notes: "" // Added this to match your textarea
   },
+  followUpDate: "",
 
   fees: {
   visitCharges: "",
@@ -529,6 +529,35 @@ useEffect(() => {
     (updated[index] as any)[key] = value;
     setForm({ ...form, prescription: updated });
   };
+
+  const handleFollowUpChange = (name : any, value : any) => {
+  setForm((prevForm) => {
+    // 1. Create a copy of the follow-up object
+    let updatedFollowUp = { ...prevForm.followUp };
+
+    // 2. Update the specific field
+    if (name === "followUp.number") updatedFollowUp.number = value;
+    if (name === "followUp.type") updatedFollowUp.type = value;
+
+    let calculatedDate = prevForm.followUpDate;
+
+    // 3. Auto-calculate logic (Uses current date as the starting point)
+    const num = parseInt(updatedFollowUp.number);
+    if (!isNaN(num) && num > 0) {
+      const d = new Date();
+      if (updatedFollowUp.type === "Days") d.setDate(d.getDate() + num);
+      if (updatedFollowUp.type === "Weeks") d.setDate(d.getDate() + num * 7 * 1); // 7 days per week
+      if (updatedFollowUp.type === "Months") d.setMonth(d.getMonth() + num);
+      calculatedDate = d.toISOString().split("T")[0];
+    }
+
+    return {
+      ...prevForm,
+      followUp: updatedFollowUp,
+      followUpDate: calculatedDate
+    };
+  });
+};
 
   const addMedicineRow = () => {
   setForm((prev) => ({
@@ -1263,7 +1292,7 @@ return (
                   <label>Refer to (Doctor/Center Name)</label>
                   <input 
                     name="referral.targetName"
-                    style={{ ...styles.input, width: "100%" }}
+                    style={{ ...styles.input, width: "70%" }}
                     value={form.referral.targetName}
                     onChange={handleChange}
                   />
@@ -1342,20 +1371,19 @@ return (
                     <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
                       Follow-up After
                     </label>
-                    <input
-                      type="number"
-                      name="followUp.number"
+                    <input 
+                      type="number" 
+                      placeholder="Enter number"
+                      style={{ ...styles.input, width: "70%" }} // Ensure style is applied
                       value={form.followUp.number}
-                      onChange={handleChange}
-                      style={{ ...styles.input, width: "70%" }}
+                      onChange={(e) => handleFollowUpChange("followUp.number", e.target.value)} 
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <select
-                      name="followUp.type"
+                    <select 
+                      style={styles.input} // Ensure style is applied
                       value={form.followUp.type}
-                      onChange={handleChange}
-                      style={{ ...styles.input, width: "70%" }}
+                      onChange={(e) => handleFollowUpChange("followUp.type", e.target.value)}
                     >
                       <option value="Days">Days</option>
                       <option value="Weeks">Weeks</option>
@@ -1368,16 +1396,16 @@ return (
                   <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
                     Follow-up Date
                   </label>
-                  <input
-                    type="date"
-                    name="followUp.date"
-                    value={form.followUp.date}
-                    onChange={handleChange}
+                  <input 
+                    type="date" 
                     style={{ ...styles.input, width: "70%" }}
+                    value={form.followUpDate} 
+                    onChange={(e) => setForm({ ...form, followUpDate: e.target.value })}
                   />
-                  {form.followUp.date && (
+                  {/* Fixed "Scheduled on" logic: now checks followUpDate */}
+                  {form.followUpDate && (
                     <p style={{ fontSize: "12px", color: "#64748b", marginTop: "4px" }}>
-                      Scheduled on: <strong>{new Date(form.followUp.date).toLocaleDateString('en-IN', { weekday: 'long' })}</strong>
+                      Scheduled on: <strong>{new Date(form.followUpDate).toLocaleDateString('en-IN', { weekday: 'long' })}</strong>
                     </p>
                   )}
                 </div>
@@ -1391,10 +1419,15 @@ return (
                 <textarea
                   name="followUp.notes"
                   value={form.followUp.notes}
-                  onChange={handleChange}
+                  // Ensure you have a handleChange that supports nested objects OR use this:
+                  onChange={(e) => setForm({
+                    ...form,
+                    followUp: { ...form.followUp, notes: e.target.value.slice(0, 120) }
+                  })}
                   placeholder="Enter specific instructions for follow-up..."
                   style={{ 
                     ...styles.input, 
+                    width: "70%",
                     height: "105px", 
                     resize: "none",
                     padding: "10px",
