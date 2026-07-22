@@ -12,6 +12,8 @@ const visitRoutes = require("./routes/visits");
 const medicineRoutes = require("./routes/medicine");
 const doctorRoutes = require("./routes/doctor");
 const clinicRoutes = require("./routes/clinic");
+const reportRoutes = require("./routes/reports");
+const analyticsRoutes = require("./routes/analytics");
 
 
 const app = express();
@@ -28,6 +30,8 @@ app.use("/patients", patientRoutes);
 app.use("/vitals", vitalsRoutes);
 app.use("/visits", visitRoutes);
 app.use("/medicines", medicineRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/analytics", analyticsRoutes);   
 
 
 const mongoURI = process.env.MONGO_URI || "mongodb+srv://myclinic_admin:clinic-admin2@cluster0.xd0omox.mongodb.net/test";

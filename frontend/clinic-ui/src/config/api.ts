@@ -1,2 +1,2 @@
 
-export const API_URL = "https://dr-clinic-app.onrender.com";
+export const API_URL = "http://localhost:5000";

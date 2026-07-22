@@ -4,227 +4,241 @@ import { API_URL } from "../config/api";
 
 /* ================= TYPES ================= */
 type Patient = {
-  _id: string;
-  fullName: string;
-  age: string;
-  gender: string;
-  dob: string;
-  mobile: string;
-  email: string;
-  address: string;
-  bloodGroup: string;
-  allergies: string;
-  medicalHistory?: string;
-  history?: {
-    [key: string]: boolean | undefined; 
-    hiv: boolean;
-    tb: boolean;
-    diabetes: boolean;
-    cancer: boolean;
-    chickenpox: boolean;
-    hypertension: boolean;
-    asthma: boolean;
-    hepatitis: boolean;
-    thyroid: boolean;
-    epilepsy: boolean;
-  };
+  _id: string;
+  fullName: string;
+  age: string;
+  gender: string;
+  dob: string;
+  mobile: string;
+  email: string;
+  address: string;
+  bloodGroup: string;
+  allergies: string;
+  medicalHistory?: string;
+  history?: {
+    [key: string]: boolean | undefined; 
+    hiv: boolean;
+    tb: boolean;
+    diabetes: boolean;
+    cancer: boolean;
+    chickenpox: boolean;
+    hypertension: boolean;
+    asthma: boolean;
+    hepatitis: boolean;
+    thyroid: boolean;
+    epilepsy: boolean;
+  };
 };
 
 type Visit = {
-  _id: string;
-  createdAt: string;
-  vitals: {
-    height?: string;
-    weight?: string;
-    bp?: string;
-    pulse?: string;
-    temperature?: string;
-    respirations?: string;
+  _id: string;
+  createdAt: string;
+  vitals: {
+    height?: string;
+    weight?: string;
+    bp?: string;
+    pulse?: string;
+    temperature?: string;
+    respirations?: string;
     spo2?: string;
     waist?: string;
     head?: string;
     bloodSugar?: string;
     randomSugar?: string;
-    bmi?: string;
-  };
-  medical: {
-    doctorNotes?: string;
-    prescription: {
-      medicine: string;
-      duration?: string;      // Added
-      durationType?: string;  // Added
-      mor: boolean;
-      aft: boolean;
-      eve: boolean;
-      night: boolean;
-    }[];
-  };
-  // Matches your DB structure in image_2235c2.png
-  referral?: {
-    targetName: string;
-    specialty: string;
-    urgency: string;
-  };
-  followUp?: {
-    date: string;
-    notes: string;
-  };
-  fees?: {
-    visitCharges: string;
-    paymentMode: string;
-  };
+    bmi?: string;
+  };
+  medical: {
+    doctorNotes?: string;
+    prescription: {
+      medicine: string;
+      duration?: string;      // Added
+      durationType?: string;  // Added
+      mor: boolean;
+      aft: boolean;
+      eve: boolean;
+      night: boolean;
+    }[];
+  };
+  // Matches your DB structure in image_2235c2.png
+  referral?: {
+    targetName: string;
+    specialty: string;
+    urgency: string;
+  };
+  followUp?: {
+    date?: string;
+    notes?: string;
+    number?: string;
+    type?: string;
+  };
+  fees?: {
+    visitCharges: string;
+    paymentMode: string;
+  };
 };
 
 
 export default function PatientProfile() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const [patient, setPatient] = useState<Patient | null>(null);
-  const [formPatient, setFormPatient] = useState<Patient | null>(null);
-  const [editMode, setEditMode] = useState(false);
-  const [historyInput, setHistoryInput] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [patient, setPatient] = useState<Patient | null>(null);
+  const [formPatient, setFormPatient] = useState<Patient | null>(null);
+  const [editMode, setEditMode] = useState(false);
+  const [historyInput, setHistoryInput] = useState("");
+  const [saving, setSaving] = useState(false);
   const [doctor, setDoctor] = useState<any>(null);
-  const [visits, setVisits] = useState<Visit[]>([]);
-  const [medicines, setMedicines] = useState<string[]>([]);
+  const [visits, setVisits] = useState<Visit[]>([]);
+  const [medicines, setMedicines] = useState<string[]>([]);
 
-  const [form, setForm] = useState({
-    fullName: "",
-    age: "",
-    gender: "",
-    dob: "",
-    mobile: "",
-    email: "",
-    address: "",
-    bloodGroup: "",
+  // Filter states for visit history
+  const [monthFilter, setMonthFilter] = useState("");
+  const [yearFilter, setYearFilter] = useState("");
+  const [referralFilter, setReferralFilter] = useState("");
+  const [medicineFilter, setMedicineFilter] = useState("");
+  const [filteredVisits, setFilteredVisits] = useState<Visit[]>([]);
 
-    allergies: "",
-    doctorNotes: "",
+  const [form, setForm] = useState({
+    fullName: "",
+    age: "",
+    gender: "",
+    dob: "",
+    mobile: "",
+    email: "",
+    address: "",
+    bloodGroup: "",
+    allergies: "",
+    doctorNotes: "",
+    prescription: [
+    {
+      medicine: "",
+      duration: "",      // Added for the number (e.g., 5)
+      durationType: "Days", // Added for the unit (Days/Weeks)
+      mor: false,
+      aft: false,
+      eve: false,
+      night: false,
+    },
+  ],
 
-    prescription: [
-    {
-      medicine: "",
-      duration: "",      // Added for the number (e.g., 5)
-      durationType: "Days", // Added for the unit (Days/Weeks)
-      mor: false,
-      aft: false,
-      eve: false,
-      night: false,
-    },
-  ],
+    vitals: {
+      height: "",
+      weight: "",
+      temperature: "",
+      pulse: "",
+      respirations: "",
+      bp: "",
+      spo2: "",          // Added: Oxygen Saturation
+      waist: "",         // Added: Waist Circumference
+      head: "",          // Added: Head Circumference (Pediatrics)
+      bloodSugar: "",    // Added: Blood Glucose
+      randomSugar: "",
+      bmi: "",           // BMI will be calculated
+  },
 
-    vitals: {
-      height: "",
-      weight: "",
-      temperature: "",
-      pulse: "",
-      respirations: "",
-      bp: "",
-      spo2: "",          // Added: Oxygen Saturation
-      waist: "",         // Added: Waist Circumference
-      head: "",          // Added: Head Circumference (Pediatrics)
-      bloodSugar: "",    // Added: Blood Glucose
-      randomSugar: "",
-      bmi: "",           // BMI will be calculated
-  },
+  history: {
+    hiv: false,
+    tb: false,
+    diabetes: false,
+    cancer: false,
+    chickenpox: false,
+    hypertension: false,
+    asthma: false,
+    hepatitis: false,
+    thyroid: false,
+    epilepsy: false,
+  },
 
-  history: {
-    hiv: false,
-    tb: false,
-    diabetes: false,
-    cancer: false,
-    chickenpox: false,
-    hypertension: false,
-    asthma: false,
-    hepatitis: false,
-    thyroid: false,
-    epilepsy: false,
-  },
+  referral: {
+  targetName: "",      // Dr. Name or Diagnostic Center
+  specialty: "",       // Cardiology, Radiology, etc.
+  reason: "",          // Why are they being referred?
+  urgency: "Normal",   // Normal, Urgent, Emergency
+  },
 
-  referral: {
-  targetName: "",      // Dr. Name or Diagnostic Center
-  specialty: "",       // Cardiology, Radiology, etc.
-  reason: "",          // Why are they being referred?
-  urgency: "Normal",   // Normal, Urgent, Emergency
-  },
-
-  followUp: {
+  followUp: {
     number: "",
     type: "Days",
     notes: ""
   },
   followUpDate: "",
 
-  fees: {
-  visitCharges: "",
-  totalCharges: "",
-  previousBalance: "0",
-  netPayable: "",
-  discount: "",
-  discountType: "Percent", // Percent | Amount
-  paymentMode: "Cash",
-  partPayment: false,
+  fees: {
+  visitCharges: "",
+  totalCharges: "",
+  previousBalance: "0",
+  netPayable: "",
+  discount: "",
+  discountType: "Percent", // Percent | Amount
+  paymentMode: "Cash",
+  partPayment: false,
 },
 
 });
 
-  /* ---------- NEW VISIT STATES ---------- */
-  const [medicalForm, setMedicalForm] = useState({
-    doctorNotes: "",
-    prescription: [
-      { medicine: "", mor: false, aft: false, eve: false, night: false },
-    ],
-  });
+  /* ---------- NEW VISIT STATES ---------- */
+  const [medicalForm, setMedicalForm] = useState({
+    doctorNotes: "",
+    prescription: [
+      { medicine: "", mor: false, aft: false, eve: false, night: false },
+    ],
+  });
 
-  const [vitalsForm, setVitalsForm] = useState({
-    height: "",
-    weight: "",
-    temperature: "",
-    pulse: "",
-    respirations: "",
-    bp: "",
-  });
+  const [vitalsForm, setVitalsForm] = useState({
+    height: "",
+    weight: "",
+    temperature: "",
+    pulse: "",
+    respirations: "",
+    bp: "",
+  });
 
-  /* ---------- REFERRAL ---------- */
-  const [referralForm, setReferralForm] = useState({
-    targetName: "",
-    specialty: "",
-    urgency: "Normal",
-  });
+  /* ---------- REFERRAL ---------- */
+  const [referralForm, setReferralForm] = useState({
+    targetName: "",
+    specialty: "",
+    urgency: "Normal",
+  });
 
-  /* ---------- FOLLOW UP ---------- */
-  const [followUpForm, setFollowUpForm] = useState({
-    date: "",
-    notes: "",
-  });
+  /* ---------- FOLLOW UP ---------- */
+  const [followUpForm, setFollowUpForm] = useState({
+    date: "",
+    notes: "",
+  });
 
-  /* ---------- FEES ---------- */
-  const [feesForm, setFeesForm] = useState({
-    visitCharges: "",
-    paymentMode: "Cash",
-  });
+  /* ---------- FEES ---------- */
+  const [feesForm, setFeesForm] = useState({
+    visitCharges: "",
+    paymentMode: "Cash",
+  });
 
 
-  /* -------- FETCH DATA -------- */
-  useEffect(() => {
-    if (!id) return;
+  /* -------- FETCH DATA for cards -------- */
+  useEffect(() => {
+    if (!id) return;
 
-    fetch(`${API_URL}/patients/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPatient(data);
-        setFormPatient(data);
-      });
+    fetch(`${API_URL}/patients/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setPatient(data);
+        setFormPatient(data);
+      });
 
-    fetch(`${API_URL}/visits/${id}`)
-      .then((res) => res.json())
-      .then(setVisits);
+    // Fetch ALL visits for the patient (no filtering at API level)
+    // We'll filter client-side in the IIFE using monthFilter and yearFilter
+    fetch(`${API_URL}/visits/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Visits received:", data);
+        console.log("Total visits:", Array.isArray(data) ? data.length : 0);
+        setVisits(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => console.error("Fetch error:", err)); // Error log
 
-    fetch(`${API_URL}/medicines`)
-      .then((res) => res.json())
-      .then((data) => setMedicines(data.map((m: any) => m.name)));
-  }, [id]);
+    fetch(`${API_URL}/medicines`)
+      .then((res) => res.json())
+      .then((data) => setMedicines(data.map((m: any) => m.name)));
+  }, [id]);
 
  /* -------- GET LOGGED-IN DOCTOR FROM LOCALSTORAGE -------- */
   useEffect(() => {
@@ -240,6 +254,28 @@ export default function PatientProfile() {
       console.warn("No doctor data found in localStorage. Please re-login.");
     }
   }, []);
+
+
+/* -------- FILTER VISITS -------- */
+useEffect(() => {
+  let filtered = [...visits];
+
+  // Referral filter
+  if (referralFilter === "yes") {
+    filtered = filtered.filter((visit) => visit.referral && (visit.referral.targetName || visit.referral.specialty));
+  } else if (referralFilter === "no") {
+    filtered = filtered.filter((visit) => !visit.referral || (!visit.referral.targetName && !visit.referral.specialty));
+  }
+
+  // Medicine filter
+  if (medicineFilter) {
+    filtered = filtered.filter((visit) => 
+      visit.medical?.prescription?.some((p) => p.medicine === medicineFilter)
+    );
+  }
+
+  setFilteredVisits(filtered);
+}, [visits, referralFilter, medicineFilter]);
 
 
 /* -------- AUTOMATIC FEES CALCULATION -------- */
@@ -278,125 +314,130 @@ useEffect(() => {
 }, [form.fees.visitCharges, form.fees.previousBalance, form.fees.discount, form.fees.discountType]);
 
 
-  /* -------- EDIT PATIENT -------- */
+  /* -------- EDIT PATIENT -------- */
 const handlePatientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  if (!formPatient) return;
-  const { name, value } = e.target;
+  if (!formPatient) return;
+  const { name, value } = e.target;
 
-  if (name === "historyString") {
-    // 1. Update the visible text box immediately
-    setHistoryInput(value);
+  if (name === "historyString") {
+    // 1. Update the visible text box immediately
+    setHistoryInput(value);
 
-    // 2. Prepare the boolean object for the DB
-    const typedKeys = value.toLowerCase().split(",").map((k) => k.trim());
-    
-    // Start with a clean slate of all false values
-    const updatedHistory: any = {
-      hiv: false, tb: false, diabetes: false, cancer: false,
-      chickenpox: false, hypertension: false, asthma: false,
-      hepatitis: false, thyroid: false, epilepsy: false
-    };
+    // 2. Prepare the boolean object for the DB
+    const typedKeys = value.toLowerCase().split(",").map((k) => k.trim());
+    
+    // Start with a clean slate of all false values
+    const updatedHistory: any = {
+      hiv: false, tb: false, diabetes: false, cancer: false,
+      chickenpox: false, hypertension: false, asthma: false,
+      hepatitis: false, thyroid: false, epilepsy: false
+    };
 
-    // Set to true only if the user typed it
-    typedKeys.forEach((key) => {
-      if (Object.prototype.hasOwnProperty.call(updatedHistory, key)) {
-        updatedHistory[key] = true;
-      }
-    });
+    // Set to true only if the user typed it
+    typedKeys.forEach((key) => {
+      if (Object.prototype.hasOwnProperty.call(updatedHistory, key)) {
+        updatedHistory[key] = true;
+      }
+    });
 
-    setFormPatient((prev: any) => ({ ...prev, history: updatedHistory }));
-  } else {
-    setFormPatient((prev: any) => ({ ...prev, [name]: value }));
-  }
+    setFormPatient((prev: any) => ({ ...prev, history: updatedHistory }));
+  } else {
+    setFormPatient((prev: any) => ({ ...prev, [name]: value }));
+  }
 };
 
-  const savePatientDetails = async () => {
-    if (!formPatient || !id) return;
-    setSaving(true);
+  const savePatientDetails = async () => {
+    if (!formPatient || !id) return;
+    setSaving(true);
 
-    try {
-      const res = await fetch(`${API_URL}/patients/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formPatient),
-      });
+    try {
+      const res = await fetch(`${API_URL}/patients/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formPatient),
+      });
 
-      const updated = await res.json();
-      setPatient(updated);
-      setFormPatient(updated);
-      setEditMode(false);
-    } finally {
-      setSaving(false);
-    }
-  };
+      const updated = await res.json();
+      setPatient(updated);
+      setFormPatient(updated);
+      setEditMode(false);
+    } finally {
+      setSaving(false);
+    }
+  };
 
-  /* -------- NEW VISIT HANDLERS -------- */
-  const handleMedicalChange = (e: any) => {
-    setMedicalForm({ ...medicalForm, [e.target.name]: e.target.value });
-  };
+  /* -------- NEW VISIT HANDLERS -------- */
+  const handleMedicalChange = (e: any) => {
+    setMedicalForm({ ...medicalForm, [e.target.name]: e.target.value });
+  };
 
-  const handleHistoryChange = (key: string, value: boolean) => {
-  if (!formPatient) return;
-  setFormPatient({
-    ...formPatient,
-    history: {
-      ...(formPatient.history || {}),
-      [key]: value, 
-    } as any, // The 'as any' tells TS we know what we're doing with the keys
-  });
+  const handleHistoryChange = (key: string, value: boolean) => {
+  if (!formPatient) return;
+  setFormPatient({
+    ...formPatient,
+    history: {
+      ...(formPatient.history || {}),
+      [key]: value, 
+    } as any, // The 'as any' tells TS we know what we're doing with the keys
+  });
 };
 
-  const handlePrescriptionChange = (
-    index: number,
-    key: string,
-    value: any
-  ) => {
-    const updated = [...medicalForm.prescription];
-    (updated[index] as any)[key] = value;
-    setMedicalForm({ ...medicalForm, prescription: updated });
-  };
+  const handlePrescriptionChange = (
+    index: number,
+    key: string,
+    value: any
+  ) => {
+    const updated = [...medicalForm.prescription];
+    (updated[index] as any)[key] = value;
+    setMedicalForm({ ...medicalForm, prescription: updated });
+  };
 
-  const addMedicineRow = () => {
-    setMedicalForm({
-      ...medicalForm,
-      prescription: [
-        ...medicalForm.prescription,
-        { medicine: "", mor: false, aft: false, eve: false, night: false },
-      ],
-    });
-  };
+  const addMedicineRow = () => {
+    setForm((prev) => ({
+      ...prev,
+      prescription: [
+        ...prev.prescription,
+        {
+          medicine: "",
+          duration: "",
+          durationType: "Days",
+          mor: false,
+          aft: false,
+          eve: false,
+          night: false,
+        },
+      ],
+    }));
+  };
 
-  const handleVitalsChange = (e: any) => {
-    setVitalsForm({ ...vitalsForm, [e.target.name]: e.target.value });
-  };
 
-  const handleChange = (e: any) => {
-  const { name, value, type, checked } = e.target;
-  const val = type === "checkbox" ? checked : value;
+  const handleChange = (e: any) => {
+  const { name, value, type, checked } = e.target;
+  const val = type === "checkbox" ? checked : value;
 
-  if (name.includes(".")) {
-    const [outer, inner] = name.split(".");
-    setForm((prev: any) => ({
-      ...prev,
-      // The [outer] key must be cast so TS knows it's an object
-      [outer]: { 
-        ...(prev[outer as keyof typeof prev] || {}), 
-        [inner]: val 
-      },
-    }));
-  } else {
-    setForm((prev) => ({ ...prev, [name]: val }));
-  }
+  if (name.includes(".")) {
+    const [outer, inner] = name.split(".");
+    setForm((prev: any) => ({
+      ...prev,
+      // The [outer] key must be cast so TS knows it's an object
+      [outer]: { 
+        ...(prev[outer as keyof typeof prev] || {}), 
+        [inner]: val 
+      },
+    }));
+  } else {
+    setForm((prev) => ({ ...prev, [name]: val }));
+  }
 };
 
-  const handleVitals = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
-  setForm((prev) => ({
-    ...prev,
-    vitals: { ...prev.vitals, [name]: value }
-  }));
+  const handleVitals = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+  setForm((prev) => ({
+    ...prev,
+    vitals: { ...prev.vitals, [name]: value }
+  }));
 };
-  const calculateBMI = () => {
+  const calculateBMI = () => {
     const heightCm = Number(form.vitals.height);
     const weightKg = Number(form.vitals.weight);
     if (!heightCm || !weightKg) return "";
@@ -404,17 +445,17 @@ const handlePatientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     return (weightKg / (heightM * heightM)).toFixed(2);
   };
 
- const handlePrescription = (
-  index: number,
-  key: string,
-  value: any
-  ) => { 
-    const updated = [...form.prescription];
-    (updated[index] as any)[key] = value;
-    setForm({ ...form, prescription: updated });
-  };
+ const handlePrescription = (
+  index: number,
+  key: string,
+  value: any
+  ) => { 
+    const updated = [...form.prescription];
+    (updated[index] as any)[key] = value;
+    setForm({ ...form, prescription: updated });
+  };
 
-  const printReferral = () => {
+  const printReferral = () => {
   if (!doctor || !patient) {
     alert("Please wait for all data to load.");
     return;
@@ -523,7 +564,7 @@ const handlePatientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   }, 300);
 };
 
-const handleFollowUpChange = (name, value) => {
+const handleFollowUpChange = (name:any, value:any) => {
   let updatedFollowUp = { ...form.followUp };
 
   // Update the specific field
@@ -595,7 +636,7 @@ const openFitnessCertificateForm = () => {
           </div>
           <div class="field" style="margin-top:15px;">
             <label>Fitness Statement (Fit to resume from:)</label>
-            <input type="date" id="fitDate" value="${form.followUp.date || today}">
+            <input type="date" id="fitDate" value="${form.followUpDate || today}">
           </div>
           <div class="field" style="margin-top:15px;">
             <label>Remarks / Clinical Findings</label>
@@ -705,7 +746,7 @@ const openSicknessCertificateForm = () => {
 
           <div class="row" style="margin-top:15px;">
             <div class="field"><label>Rest From Date</label><input type="date" id="fromDate" value="${today}"></div>
-            <div class="field"><label>Rest To Date (Inclusive)</label><input type="date" id="toDate" value="${form.followUp.date || ""}"></div>
+            <div class="field"><label>Rest To Date (Inclusive)</label><input type="date" id="toDate" value="${form.followUpDate || ""}"></div>
           </div>
 
           <div class="field" style="margin-top:15px;">
@@ -781,9 +822,21 @@ const openSicknessCertificateForm = () => {
   certWindow.document.close();
 };
 
- const saveVisit = async () => {
+ const saveVisit = async () => {
   if (!id) return;
   setSaving(true);
+
+  const prescriptionPayload = form.prescription
+    .filter((row) => row.medicine || row.duration || row.mor || row.aft || row.eve || row.night)
+    .map((row) => ({
+      medicine: row.medicine,
+      duration: row.duration,
+      durationType: row.durationType || "Days",
+      mor: Boolean(row.mor),
+      aft: Boolean(row.aft),
+      eve: Boolean(row.eve),
+      night: Boolean(row.night),
+    }));
 
   // 1. Prepare data objects
   const vitalsPayload = {
@@ -798,10 +851,15 @@ const openSicknessCertificateForm = () => {
     vitals: vitalsPayload,
     medical: {
       doctorNotes: form.doctorNotes,
-      prescription: form.prescription,
+      prescription: prescriptionPayload,
     },
     referral: form.referral,
-    followUp: form.followUp,
+    followUp: {
+      date: form.followUpDate || "",
+      notes: form.followUp?.notes || "",
+      number: form.followUp?.number || "",
+      type: form.followUp?.type || "Days",
+    },
     fees: form.fees,
   };
 
@@ -840,7 +898,8 @@ const openSicknessCertificateForm = () => {
         bp: "", spo2: "", waist: "", head: "", bloodSugar: "", randomSugar: "", bmi: "" 
       },
       referral: { targetName: "", specialty: "", reason: "", urgency: "Normal" },
-      followUp: { number: "", type: "Days", date: "", notes: "" },
+      followUp: { number: "", type: "Days", notes: "" },
+      followUpDate: "",
       fees: { 
         visitCharges: "", totalCharges: "", previousBalance: "0", netPayable: "", 
         discount: "", discountType: "Percent", paymentMode: "Cash", partPayment: false 
@@ -857,369 +916,361 @@ const openSicknessCertificateForm = () => {
   }
 };
 
-  if (!patient) return <div style={{ padding: 20 }}>Loading...</div>;
+  if (!patient) return <div style={{ padding: 20 }}>Loading...</div>;
 
 /*-------UI-------*/
 return (
-    <div
-  style={{
-    background: "#f1f5f9",
-    minHeight: "100vh",
-    padding: "24px 0",
-    overflowX: "hidden",
-    boxSizing: "border-box",
-  }}
->
-  <div
-    style={{
-      maxWidth: "1200px",
-      margin: "0 auto",
-      padding: "0 24px",
-    }}
-  >
-      <button onClick={() => navigate("/patients")} style={backBtn}>
-        ← Back to Patients
-      </button>
+    <div
+        style={{
+          background: "#f1f5f9",
+          minHeight: "100vh",
+          padding: "24px 0",
+          overflowX: "hidden",
+          boxSizing: "border-box",
+        }}
+      >
+      <div
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "0 24px",
+        }}
+      >
+      <button onClick={() => navigate("/patients")} style={styles.backBtn}>
+        ← Back to Patients
+      </button>
 
-      <h2 style={{ textAlign: "center", margin: "16px 0", color:"#000" }}>
-        Patient Profile
-      </h2>
+      <h2 style={{ textAlign: "center", margin: "16px 0", color:"#0F172A" }}>
+        Patient Profile
+      </h2>
 
-      {/* 1. PATIENT DETAILS  */}
-      <div
-        style={{
-          ...cardStyle,
-          width: "100%",
-          margin: "0 auto 24px",
-        }}
-      >
+      {/* 1. PATIENT DETAILS  */}
+      <div
+        style={{
+          ...cardStyle,
+          width: "100%",
+          margin: "0 auto 24px",
+        }}
+      >
 
-        <div style={headerRow}>
-          <h3>Patient Details</h3>
-          <button
-  style={editBtn}
-  // Find your Edit Details button and update the onClick:
-onClick={() => {
-  if (!editMode) {
-    setFormPatient({ ...patient });
-    // Pre-fill the text box with current true values
-    const currentHistory = Object.entries(patient?.history || {})
-      .filter(([_, val]) => val === true)
-      .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1))
-      .join(", ");
-    setHistoryInput(currentHistory);
-  }
-  setEditMode(!editMode);
-}}
->
-  {editMode ? "Cancel" : "Edit Details"}
-</button>
-        </div>
+        <div style={headerRow}>
+          <h3 style={{marginTop: 0, marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>Patient Details</h3>
+          <button
+          style={editBtn}
+          // Find your Edit Details button and update the onClick:
+        onClick={() => {
+          if (!editMode) {
+            setFormPatient({ ...patient });
+            // Pre-fill the text box with current true values
+            const currentHistory = Object.entries(patient?.history || {})
+              .filter(([_, val]) => val === true)
+              .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1))
+              .join(", ");
+            setHistoryInput(currentHistory);
+          }
+          setEditMode(!editMode);
+        }}
+        >
+          {editMode ? "Cancel" : "Edit Details"}
+        </button>
+        </div>
 
-        <div style={detailsGrid}>
-      {/* 1. RENDER STANDARD FIELDS */}
-      {[
-        ["Full Name", "fullName"],
-        ["Age", "age"],
-        ["Gender", "gender"],
-        ["DOB", "dob"],
-        ["Mobile", "mobile"],
-        ["Email", "email"],
-        ["Address", "address"],
-        ["Blood Group", "bloodGroup"],
-        ["Allergies", "allergies"],
-      ].map(([label, key]) => (
-        <div key={key}>
-          <label style={labelStyle}>{label}</label>
-          {editMode ? (
-            <input
-              name={key}
-              value={(formPatient as any)?.[key] || ""}
-              onChange={handlePatientChange}
-              style={inputStyle}
-            />
-          ) : (
-            <div>{(patient as any)?.[key] || "-"}</div>
-          )}
-        </div>
-      ))}
+        <div style={detailsGrid}>
+      {/* 1. RENDER STANDARD FIELDS */}
+      {[
+        ["Full Name", "fullName"],
+        ["Age", "age"],
+        ["Gender", "gender"],
+        ["DOB", "dob"],
+        ["Mobile", "mobile"],
+        ["Email", "email"],
+        ["Address", "address"],
+        ["Blood Group", "bloodGroup"],
+        ["Allergies", "allergies"],
+      ].map(([label, key]) => (
+        <div key={key}>
+          <label style={labelStyle}>{label}</label>
+          {editMode ? (
+            <input
+              name={key}
+              value={(formPatient as any)?.[key] || ""}
+              onChange={handlePatientChange}
+              style={styles.inputStyle}
+            />
+          ) : (
+            <div style={{fontSize:"17px", color:"#1E293B"}}>{(patient as any)?.[key] || "-"}</div>
+          )}
+        </div>
+      ))}
 
-      {/* 2. RENDER MEDICAL HISTORY */}
-    <div style={{ gridColumn: "span 2", marginTop: "10px" }}>
-  <label style={labelStyle}>Medical History</label>
-  {editMode ? (
-    <input
-      name="historyString"
-      value={historyInput} // Use the new state variable here
-      onChange={handlePatientChange}
-      placeholder="e.g. Asthma, HIV"
-      style={inputStyle}
-    />
-  ) : (
-    <div style={{ color: "#000" }}>
-      {patient?.history && Object.values(patient.history).includes(true) ? 
-        Object.entries(patient.history)
-          .filter(([_, value]) => value === true)
-          .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1))
-          .join(", ") 
-        : "None"}
-    </div>
-  )}
+      {/* 2. RENDER MEDICAL HISTORY */}
+    <div style={{ gridColumn: "span 2", marginTop: "10px" }}>
+  <label style={labelStyle}>Medical History</label>
+  {editMode ? (
+    <input
+      name="historyString"
+      value={historyInput} // Use the new state variable here
+      onChange={handlePatientChange}
+      placeholder="e.g. Asthma, HIV"
+      style={styles.inputStyle}
+    />
+  ) : (
+    <div style={{ color: "#000" }}>
+      {patient?.history && Object.values(patient.history).includes(true) ? 
+        Object.entries(patient.history)
+          .filter(([_, value]) => value === true)
+          .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1))
+          .join(", ") 
+        : "None"}
+    </div>
+  )}
 </div>
-    </div>
-    {editMode && (
-          <div style={{ textAlign: "right", marginTop: 16 }}>
-            <button onClick={savePatientDetails} style={saveBtn}>
-              Save Changes
-            </button>
-          </div>
-        )}
-      </div>
+    </div>
+    {editMode && (
+          <div style={{ textAlign: "right", marginTop: 16 }}>
+            <button onClick={savePatientDetails} style={saveBtn}>
+              Save Changes
+            </button>
+          </div>
+        )}
+      </div>
 
-      {/* 2. ALLERGIES + VITALS ROW */}
-          <div style={styles.clinicalRow}>
-            
-            {/* Left: Allergies Card (Takes up 2 parts of the grid) */}
-            <div style={{ ...styles.fixedHeightCard }}>
-              <h3>
-                Allergies & Medical Alerts
-              </h3>
-              <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                <label style={{ fontWeight: 600, marginBottom: 8 }}>Specify Allergies</label>
-                <textarea
-                  name="allergies"
-                  value={form.allergies}
-                  onChange={handleChange}
-                  placeholder="e.g. Penicillin, Peanuts..."
-                  style={{ 
-                    ...styles.fullTextarea, 
-                    height: "100%", 
-                    background: "#333", // Matching your dark UI in screenshot
-                    color: "#fff" 
-                  }} 
-                />
-              </div>
-            </div>
+      {/* 2. ALLERGIES + VITALS ROW */}
+          <div style={styles.clinicalRow}>
+            
+            {/* Left: Allergies Card (Takes up 2 parts of the grid) */}
+            <div style={{ ...styles.fixedHeightCard }}>
+              <h3 style={{color:"#0F172A" ,marginTop: 0, marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>Allergies & Medical Alerts
+              </h3>
+              <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                <label style={{ fontWeight: 600, marginBottom: 8, color:"#475569" }}>Specify Allergies</label>
+                <textarea
+                  name="allergies"
+                  value={form.allergies}
+                  onChange={handleChange}
+                  placeholder="e.g. Penicillin, Peanuts..."
+                  style={{ 
+                    ...styles.fullTextarea, 
+                    height: "100%", 
+                    background: "#FFFFFF", // Matching your dark UI in screenshot
+                    color: "#1E293B" 
+                  }} 
+                />
+              </div>
+            </div>
 
-            {/* Right: Vitals Card (Takes up 1 part of the grid) */}
-            <div style={styles.fixedHeightCard}>
-              <h3 style={{ textAlign: "center", marginTop: 0, marginBottom: 12 }}>Vitals</h3>
-              <div style={{ flex: 1, overflowY: "auto", paddingRight: "5px" }}>
-                <table style={{ ...styles.vitalsTable, width: "100%" }}>
-                  <tbody>
-                    {[
-                      ["HEIGHT (cm)", "height"],
-                      ["WEIGHT (kg)", "weight"],
-                      ["TEMP (°F)", "temperature"],
-                      ["PULSE (bpm)", "pulse"],
-                      ["RESP (breaths/m)", "respirations"],
-                      ["BP (mmHg)", "bp"],
-                      ["SPO2 (%)", "spo2"],
-                      ["WAIST (in)", "waist"],
-                      ["HEAD (cm)", "head"],
-                      ["FBS (mg/dL)", "bloodSugar"],
-                      ["RBS (mg/dL)", "randomSugar"],
-                    ].map(([label, key]) => (
-                      <tr key={key}>
-                        <td style={styles.vitalLabelCell}>{label}</td>
-                        <td>
-                          <input
-                            name={key}
-                            value={(form.vitals as any)[key]}
-                            onChange={handleVitals}
-                            style={{
-                              ...styles.vitalInputSmall, 
-                              width: "100%", 
-                              background: "#333", 
-                              color: "#fff",
-                              boxSizing: "border-box"
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div style={styles.bmiBox}>
-                  BMI : <strong>{calculateBMI() || "--"}</strong>
-                </div>
-              </div>
-            </div>
-          </div>  
+            {/* Right: Vitals Card (Takes up 1 part of the grid) */}
+            <div style={styles.fixedHeightCard}>
+              <h3 style={{ textAlign: "center", marginTop: 0, marginBottom: 16 , color:"#0F172A", borderBottom: "1px solid #eee", paddingBottom: "8px"}}>Vitals</h3>
+              <div style={{ flex: 1, overflowY: "auto", paddingRight: "5px" }}>
+                <table style={{ ...styles.vitalsTable, width: "100%" }}>
+                  <tbody>
+                    {[
+                      ["HEIGHT (cm)", "height"],
+                      ["WEIGHT (kg)", "weight"],
+                      ["TEMP (°F)", "temperature"],
+                      ["PULSE (bpm)", "pulse"],
+                      ["RESP (breaths/m)", "respirations"],
+                      ["BP (mmHg)", "bp"],
+                      ["SPO2 (%)", "spo2"],
+                      ["WAIST (in)", "waist"],
+                      ["HEAD (cm)", "head"],
+                      ["FBS (mg/dL)", "bloodSugar"],
+                      ["RBS (mg/dL)", "randomSugar"],
+                    ].map(([label, key]) => (
+                      <tr key={key}>
+                        <td style={styles.vitalLabelCell}>{label}</td>
+                        <td>
+                          <input
+                            name={key}
+                            value={(form.vitals as any)[key]}
+                            onChange={handleVitals}
+                            style={styles.vitalInputSmall}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div style={styles.bmiBox}>
+                  BMI : <strong>{calculateBMI() || "--"}</strong>
+                </div>
+              </div>
+            </div>
+          </div>  
 
-          {/* 3. NEW BLANK CARD */}
-          <div style={styles.card}>
-            <h3 style={{ marginBottom: 16 }}>New Section Title</h3>
-            <div style={{ minHeight: '100px', border: '1px dashed #cbd5e1', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
-              {/* You can drop new content, inputs, or tables here later */}
-              Blank Space for Future Content
-            </div>
-          </div>
+          {/* 3. NEW BLANK CARD */}
+          {/* <div style={styles.card}>
+            <h3 style={{ marginBottom: 16 }}>New Section Title</h3>
+            <div style={{ minHeight: '100px', border: '1px dashed #cbd5e1', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
+              
+              Blank Space for Future Content
+            </div>
+          </div>*/}
 
-      {/* 4. PRESCRIPTION CARD (Full 100% Width) */}
-          <div style={styles.prescriptionCard}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "15px" }}>
-              <h3 style={{ margin: 0, fontSize: "20px" }}>Prescription</h3>
-            </div>
-
-            <div style={styles.prescriptionGrid}>
-              {/* Left Part: Medication Schedule */}
-              <div>
-                <h4 style={{ color: "#475569", marginBottom: "15px" }}>Medication Schedule</h4>
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ background: "#f8fafc" }}>
-                      <th style={{ ...styles.th, textAlign: "left", padding: "10px" }}>MEDICINE</th>
-                      <th style={{ ...styles.th, width: "130px" }}>DURATION</th>
-                      <th style={styles.th}>MOR</th>
-                      <th style={styles.th}>AFT</th>
-                      <th style={styles.th}>EVE</th>
-                      <th style={styles.th}>NIGHT</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {form.prescription.map((row, index) => (
-                      <tr key={index} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                        <td style={{ padding: "10px 0" }}>
-                          <select
-                            style={{ ...styles.input, width: "95%" }}
-                            value={row.medicine}
-                            onChange={(e) => handlePrescription(index, "medicine", e.target.value)}
-                          >
-                            <option value="">Select Medicine</option>
-                            {medicines.map((m) => <option key={m} value={m}>{m}</option>)}
-                          </select>
-                        </td>
-                        <td style={{ padding: "10px 0" }}>
-                          <div style={{ display: "flex", gap: "4px" }}>
-                            <input
-                              type="number"
-                              style={{ ...styles.input, width: "45px" }}
-                              value={row.duration}
-                              onChange={(e) => handlePrescription(index, "duration", e.target.value)}
-                            />
-                            <select 
-                              style={{ ...styles.input, width: "70px", fontSize: "12px" }}
-                              value={row.durationType}
-                              onChange={(e) => handlePrescription(index, "durationType", e.target.value)}
-                            >
-                              <option value="Days">Days</option>
-                              <option value="Weeks">Weeks</option>
-                            </select>
-                          </div>
-                        </td>
-                        {["mor", "aft", "eve", "night"].map((t) => (
-                          <td key={t} style={{ textAlign: "center" }}>
-                            <input
-                              type="checkbox"
-                              checked={(row as any)[t]}
-                              onChange={(e) => handlePrescription(index, t, e.target.checked)}
-                              style={{ cursor: "pointer", width: "16px", height: "16px" }}
-                            />
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                
-                <button 
-                  type="button" 
-                  onClick={addMedicineRow} 
-                  style={{ ...styles.primaryBtn, background: "white", color: "#2563eb", border: "1px solid #bfdbfe", marginTop: "15px" }}
-                >
-                  + Add Medicine
-                </button>
-              </div>
-
-              {/* Right Part: Doctor Notes */}
-              <div>
-                <h4 style={{ color: "#475569", marginBottom: "15px" }}>Doctor Notes / Outside Medicines</h4>
-                <textarea
-                  name="doctorNotes"
-                  value={form.doctorNotes}
-                  onChange={handleChange}
-                  placeholder="Enter additional clinical notes or medicines prescribed elsewhere..."
-                  style={styles.noteArea}
-                />
-              </div>
-            </div>
-          </div>
-
-        {/* 5. REFERENCE / REFERRAL CARD */}
-          <div style={styles.prescriptionCard}>
-              <h3 style={{ margin: "0 0 20px 0" }}>Patient Referral</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-                <div>
-                  <label>Refer to (Doctor/Center Name)</label>
-                  <input 
-                    name="referral.targetName"
-                    style={{ ...styles.input, width: "80%" }}
-                    value={form.referral.targetName}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div style={styles.field}>
-                <label>Urgency</label>
-                <select 
-                  name="referral.urgency" 
-                  value={form.referral.urgency} 
-                  onChange={handleChange} 
-                  style={styles.input}
-                >
-                  <option value="Normal">Normal</option>
-                  <option value="Urgent">Urgent</option>
-                  <option value="Emergency">Emergency</option>
-                </select>
-              </div>
-                <div>
-                  <label>Specialty</label>
-                  <select 
-                    name="referral.specialty"
-                    style={{ ...styles.input, width: "100%" }}
-                    value={form.referral.specialty}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select Specialty</option>
-                    {["Cardiology", "Neurology", "Radiology", "Orthopedics"].map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
-              </div>
-
-
-            <div style={{ marginTop: "20px" }}>
-              <label style={{ fontWeight: 600, display: "block", marginBottom: "8px" }}>Reason for Referral / Clinical Findings</label>
-              <textarea
-                placeholder="Briefly describe why the patient is being referred..."
-                style={{ ...styles.noteArea, height: "120px" }}
-                value={form.referral.reason}
-                onChange={(e) => setForm({...form, referral: {...form.referral, reason: e.target.value}})}
-              />
-            </div>
-
-          {/* BUTTON */}
-          <div style={{ textAlign: "right", marginTop: 20 }}>
-            <button
-              type="button"
-              onClick={printReferral}
-              style={{
-                padding: "8px 18px",
-                background: "#059669",
-                color: "#fff",
-                border: "none",
-                borderRadius: 6,
-                cursor: "pointer",
-                fontWeight: 600
-              }}
-            >
-              🖨 Print Referral Letter
-            </button>
-          </div>
-          </div>
-
-          {/* 6. FOLLOW-UP CARD */}
+      {/* 4. PRESCRIPTION CARD (Full 100% Width) */}
           <div style={styles.prescriptionCard}>
-            <h3 style={{ marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>Follow-up</h3>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "15px" }}>
+              <h3 style={{ margin: 0, fontSize: "20px", color:"#0F172A" }}>Prescription</h3>
+            </div>
+
+            <div style={styles.prescriptionGrid}>
+              {/* Left Part: Medication Schedule */}
+              <div>
+                <h4 style={{ color: "#0F172A", marginBottom: "15px" }}>Medication Schedule</h4>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ background: "#f8fafc" }}>
+                      <th style={{ ...styles.th, textAlign: "left", padding: "10px",color: "#475569" }}>MEDICINE</th>
+                      <th style={{ ...styles.th, width: "130px",color: "#475569" }}>DURATION</th>
+                      <th style={{ ...styles.th, color: "#475569" }}>MOR</th>
+                      <th style={{ ...styles.th, color: "#475569" }}>AFT</th>
+                      <th style={{ ...styles.th, color: "#475569" }}>EVE</th>
+                      <th style={{ ...styles.th, color: "#475569" }}>NIGHT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {form.prescription.map((row, index) => (
+                      <tr key={index} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "10px 0" }}>
+                          <select
+                            style={{ ...styles.inputStyle, width: "95%" }}
+                            value={row.medicine}
+                            onChange={(e) => handlePrescription(index, "medicine", e.target.value)}
+                          >
+                            <option value="">Select Medicine</option>
+                            {medicines.map((m) => <option key={m} value={m}>{m}</option>)}
+                          </select>
+                        </td>
+                        <td style={{ padding: "10px 0" }}>
+                          <div style={{ display: "flex", gap: "4px" }}>
+                            <input
+                              type="number"
+                              style={{ ...styles.inputStyle, width: "60px" }}
+                              value={row.duration}
+                              onChange={(e) => handlePrescription(index, "duration", e.target.value)}
+                            />
+                            <select 
+                              style={{ ...styles.inputStyle, width: "80px", fontSize: "12px" }}
+                              value={row.durationType}
+                              onChange={(e) => handlePrescription(index, "durationType", e.target.value)}
+                            >
+                              <option value="Days">Days</option>
+                              <option value="Weeks">Weeks</option>
+                            </select>
+                          </div>
+                        </td>
+                        {["mor", "aft", "eve", "night"].map((t) => (
+                          <td key={t} style={{ textAlign: "center" }}>
+                            <input
+                              type="checkbox"
+                              checked={(row as any)[t]}
+                              onChange={(e) => handlePrescription(index, t, e.target.checked)}
+                              style={{ cursor: "pointer", width: "16px", height: "16px", backgroundColor: "#FFFFFF", border: "1px solid #cbd5e1", color: "#1E293B" }}
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                
+                <button 
+                  type="button" 
+                  onClick={addMedicineRow} 
+                  style={{ ...styles.primaryBtn, background: "white", color: "#2563eb", border: "1px solid #bfdbfe", marginTop: "15px" }}
+                >
+                  + Add Medicine
+                </button>
+              </div>
+
+              {/* Right Part: Doctor Notes */}
+              <div>
+                <h4 style={{ color: "#475569", marginBottom: "15px" }}>Doctor Notes / Outside Medicines</h4>
+                <textarea
+                  name="doctorNotes"
+                  value={form.doctorNotes}
+                  onChange={handleChange}
+                  placeholder="Enter additional clinical notes or medicines prescribed elsewhere..."
+                  style={styles.noteArea}
+                />
+              </div>
+            </div>
+          </div>
+
+        {/* 5. REFERENCE / REFERRAL CARD */}
+          <div style={styles.prescriptionCard}>
+              <h3 style={{ margin: "0", color: "#0F172A", marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>Patient Referral</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                <div style={styles.field}>
+                  <label>Refer to (Doctor/Center Name)</label>
+                  <input 
+                    name="referral.targetName"
+                    style={{ ...styles.inputStyle, width: "100%" }}
+                    value={form.referral.targetName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div style={styles.field}>
+                  <label>Urgency</label>
+                  <select 
+                    name="referral.urgency" 
+                    value={form.referral.urgency} 
+                    onChange={handleChange} 
+                    style={styles.inputStyle}
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Emergency">Emergency</option>
+                  </select>
+                </div>
+                <div style={styles.field}>
+                  <label>Specialty</label>
+                  <select 
+                    name="referral.specialty"
+                    style={{ ...styles.inputStyle, width: "100%" }}
+                    value={form.referral.specialty}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select Specialty</option>
+                    {["Cardiology", "Neurology", "Radiology", "Orthopedics"].map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+
+            <div style={{ marginTop: "20px" }}>
+              <label style={{ fontWeight: 600, display: "block", marginBottom: "8px", color: "#475569" }}>Reason for Referral / Clinical Findings</label>
+              <textarea
+                placeholder="Briefly describe why the patient is being referred..."
+                style={{ ...styles.noteArea, height: "120px" }}
+                value={form.referral.reason}
+                onChange={(e) => setForm({...form, referral: {...form.referral, reason: e.target.value}})}
+              />
+            </div>
+
+          {/* BUTTON */}
+          <div style={{ textAlign: "right", marginTop: 20 }}>
+            <button
+              type="button"
+              onClick={printReferral}
+              style={{
+                padding: "8px 18px",
+                background: "#059669",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                cursor: "pointer",
+                fontWeight: 600
+              }}
+            >
+              🖨 Print Referral Letter
+            </button>
+          </div>
+          </div>
+
+          {/* 6. FOLLOW-UP CARD */}
+          <div style={styles.prescriptionCard}>
+            <h3 style={{ marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px", color:"#0F172A" }}>Follow-up</h3>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
               
@@ -1227,21 +1278,21 @@ onClick={() => {
               <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
                 <div style={{ display: "flex", alignItems: "end", gap: "10px" }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
+                    <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px", color: "#475569" }}>
                       Follow-up After
                     </label>
                     <input
                       type="number"
                       value={form.followUp?.number || ""}
                       onChange={(e) => handleFollowUpChange("followUp.number", e.target.value)}
-                      style={{ ...styles.input, width: "70%" }}
+                      style={{ ...styles.inputStyle, width: "70%" }}
                     />
                   </div>
                   <div style={{ flex: 1 }}>
                     <select
                       value={form.followUp?.type || "Days"}
                       onChange={(e) => handleFollowUpChange("followUp.type", e.target.value)}
-                      style={{ ...styles.input, width: "70%" }}
+                      style={{ ...styles.inputStyle, width: "70%" }}
                     >
                       <option value="Days">Days</option>
                       <option value="Weeks">Weeks</option>
@@ -1251,14 +1302,14 @@ onClick={() => {
                 </div>
 
                 <div>
-                  <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
+                  <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px", color: "#475569" }}>
                     Follow-up Date
                   </label>
                   <input
                     type="date"
                     value={form.followUpDate || ""} 
                     onChange={(e) => setForm({ ...form, followUpDate: e.target.value })}
-                    style={{ ...styles.input, width: "70%" }}
+                    style={{ ...styles.inputStyle, width: "70%" }}
                   />
                   
                   {form.followUpDate && (
@@ -1271,7 +1322,7 @@ onClick={() => {
 
               {/* Right Column: Follow-up Notes */}
               <div>
-                <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px" }}>
+                <label style={{ fontWeight: 600, fontSize: "14px", display: "block", marginBottom: "5px", color: "#475569" }}>
                   Follow-up Note
                 </label>
                 <textarea
@@ -1283,7 +1334,7 @@ onClick={() => {
                   })}
                   placeholder="Enter specific instructions for follow-up..."
                   style={{ 
-                    ...styles.input, 
+                    ...styles.inputStyle, 
                     height: "105px", 
                     resize: "none",
                     padding: "10px",
@@ -1300,7 +1351,7 @@ onClick={() => {
 
       {/* 7. FEES / CHARGES (MyOPD style) */}
       <div style={styles.prescriptionCard}>
-        <h3 style={{ marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>Fees & Payment</h3>
+        <h3 style={{ marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px", color:"#0F172A" }}>Fees & Payment</h3>
 
         <div
           style={{
@@ -1313,38 +1364,38 @@ onClick={() => {
         >
           {/* Visit Charges */}
           <div style={styles.field}>
-            <label style={{ fontWeight: 600, fontSize: "14px" }}>Visit Charges</label>
+            <label style={{ fontWeight: 600, fontSize: "14px", color:"#475569" }}>Visit Charges</label>
             <input
               type="number"
               name="fees.visitCharges"
               value={form.fees.visitCharges}
               onChange={handleChange}
               placeholder="0.00"
-              style={{ ...styles.input, width: "40%" }}
+              style={{ ...styles.inputStyle, width: "65%" }}
             />
           </div>
 
           {/* Total Charges - Corrected ReadOnly UI */}
           <div style={styles.field}>
-            <label style={{ fontWeight: 600, fontSize: "14px" }}>Total Charges</label>
+            <label style={{ fontWeight: 600, fontSize: "14px", color:"#475569" }}>Total Charges</label>
               <input
                 type="number"
                 name="fees.totalCharges"
                 value={form.fees.totalCharges}
                 readOnly // Important: System calculates this
-                style={{ ...styles.input, width: "40%", background: "#f1f5f9", cursor: "not-allowed", color: "#64748b" }}
+                style={{ ...styles.inputStyle, width: "65%", background: "#f1f5f9", cursor: "not-allowed", color: "#64748b" }}
               />
           </div>
 
           {/* Previous Balance */}
           <div style={styles.field}>
-            <label style={{ fontWeight: 600, fontSize: "14px" }}>Prev. Balance</label>
+            <label style={{ fontWeight: 600, fontSize: "14px", color:"#475569" }}>Prev. Balance</label>
             <input
               type="number"
               name="fees.previousBalance"
               value={form.fees.previousBalance}
               onChange={handleChange}
-              style={{ ...styles.input, width: "40%" }}
+              style={{ ...styles.inputStyle, width: "65%" }}
             />
           </div>
 
@@ -1356,26 +1407,26 @@ onClick={() => {
               name="fees.netPayable"
               value={form.fees.netPayable}
               readOnly // Important: System calculates this
-              style={{ ...styles.input, width: "40%", background: "#f0fdf4", color: "#16a34a", fontWeight: "bold" }}
+              style={{ ...styles.inputStyle, width: "65%", background: "#f0fdf4", color: "#16a34a", fontWeight: "bold" }}
             />
           </div>
 
           {/* Combined Discount & Type Field */}
           <div style={styles.field}>
-            <label style={{ fontWeight: 600, fontSize: "14px" }}>Discount</label>
+            <label style={{ fontWeight: 600, fontSize: "14px", color:"#475569" }}>Discount</label>
             <div style={{ display: "flex", gap: "4px" }}>
               <input
                 type="number"
                 name="fees.discount"
                 value={form.fees.discount}
                 onChange={handleChange}
-                style={{ ...styles.input, width: "40%" , flex :2}}
+                style={{ ...styles.inputStyle, width: "65%" , flex :2}}
               />
               <select
                 name="fees.discountType"
                 value={form.fees.discountType}
                 onChange={handleChange}
-                style={{ ...styles.input, flex: 1, padding: "8px 2px", minWidth: "50px", width:"50%"}}
+                style={{ ...styles.inputStyle, flex: 1, padding: "8px 2px", minWidth: "50px", width:"65%"}}
               >
                 <option value="Percent">%</option>
                 <option value="Amount">₹</option>
@@ -1385,12 +1436,12 @@ onClick={() => {
 
           {/* Payment Mode */}
           <div style={styles.field}>
-            <label style={{ fontWeight: 600, fontSize: "14px" }}>Payment Mode</label>
+            <label style={{ fontWeight: 600, fontSize: "14px", color: "#475569" }}>Payment Mode</label>
             <select
               name="fees.paymentMode"
               value={form.fees.paymentMode}
               onChange={handleChange}
-              style={{ ...styles.input, width: "60%" }}
+              style={{ ...styles.inputStyle, width: "65%" }}
             >
               <option value="Cash">Cash</option>
               <option value="UPI">UPI</option>
@@ -1400,7 +1451,7 @@ onClick={() => {
           </div>
         </div>
 
-        {/* Part Payment Box - Adjusted for better contrast */}
+        {/* Part Payment Box - Adjusted for better contrast
         <div style={{ marginTop: 15, padding: "12px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
           <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", color: "#475569" }}>
             <input
@@ -1412,7 +1463,7 @@ onClick={() => {
             />
             <span style={{ fontSize: "15px", fontWeight: 500 }}>Enable Part Payment / Credit</span>
           </label>
-        </div>
+        </div> */}
       </div>
 
       {/* 8. CERTIFICATES LINKS (Directly below Fees card) */}
@@ -1477,7 +1528,7 @@ onClick={() => {
 
 
 
-      {/* 9. SAVE VISIT BUTTON */}
+      {/* 9. SAVE VISIT BUTTON */}
       <div style={{ 
         display: "flex", 
         justifyContent: "center", 
@@ -1485,18 +1536,144 @@ onClick={() => {
         marginTop: "30px",
         paddingBottom: "20px" 
       }}>
-        <button onClick={saveVisit} style={saveBtn}>
-          Save Visit
-        </button>
+        <button onClick={saveVisit} style={styles.saveBtn}>
+          Save Visit
+        </button>
       </div>
+      <br></br>
 
-      {/* 10. VISIT HISTORY */}
-      <div style={cardStyle}>
-        <h3 style={{ marginBottom: "20px" }}>Detailed Visit History</h3>
+      {/* 10. VISIT HISTORY */}
+      <div style={styles.cardStyle}>
+        <h3 style={{ margin: "0", color: "#0F172A", marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>Detailed Visit History</h3>
+        
+        {/* FILTERS ROW */}
+        <div style={{ display: "flex", gap: "12px", alignItems: "flex-end", marginBottom: "24px", paddingBottom: "16px", borderBottom: "1px solid #f1f5f9" }}>
+          {/* Month Filter */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <label style={{ fontSize: "11px", fontWeight: 600, color: "#64748b", textTransform: "uppercase" }}>Month</label>
+            <select
+              value={monthFilter}
+              onChange={(e) => setMonthFilter(e.target.value)}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "6px",
+                border: "1px solid #E2E8F0",
+                fontSize: "13px",
+                color: "#1E293B",
+                background: "#ffffff",
+                outline: "none",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                minWidth: "100px"
+              }}
+            >
+              <option value="">Select Month</option>
+              <option value="01">January</option>
+              <option value="02">February</option>
+              <option value="03">March</option>
+              <option value="04">April</option>
+              <option value="05">May</option>
+              <option value="06">June</option>
+              <option value="07">July</option>
+              <option value="08">August</option>
+              <option value="09">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+          </div>
 
-        {visits.length === 0 && <p style={{ color: "#64748b" }}>No previous visits found.</p>}
+          {/* Year Filter */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <label style={{ fontSize: "11px", fontWeight: 600, color: "#64748b", textTransform: "uppercase" }}>Year</label>
+            <select
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "6px",
+                border: "1px solid #E2E8F0",
+                fontSize: "13px",
+                color: "#1E293B",
+                background: "#ffffff",
+                outline: "none",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                minWidth: "100px"
+              }}
+            >
+              <option value="">Select Year</option>
+              {[2024, 2025, 2026].map((year) => (
+                <option key={year} value={year.toString()}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        {(() => {
+            // We create the filtered list once to use for both mapping and the "empty" check
+            const filteredVisits = visits.filter((v) => {
+              const visitDate = new Date(v.createdAt);
+              // Month comparison: getMonth() returns 0-11, but our select sends "01"-"12"
+              // Convert getMonth() to 1-indexed and pad with 0 for comparison
+              const visitMonth = String(visitDate.getMonth() + 1).padStart(2, '0');
+              const visitYear = visitDate.getFullYear().toString();
+              
+              const matchesMonth = monthFilter === "" || visitMonth === monthFilter;
+              const matchesYear = yearFilter === "" || visitYear === yearFilter;
+              return matchesMonth && matchesYear;
+            });
 
-        {visits.map((v) => (
+            return (
+              <>
+                {/* Clear Button */}
+                {(monthFilter || yearFilter) && (
+                  <button
+                    onClick={() => {
+                      setMonthFilter("");
+                      setYearFilter("");
+                    }}
+                    style={{
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      border: "1px solid #E2E8F0",
+                      fontSize: "13px",
+                      background: "#f1f5f9",
+                      color: "#64748b",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      fontWeight: 500,
+                      marginBottom: "16px"
+                    }}
+                  >
+                    Clear
+                  </button>
+                )}
+
+                {/* Display filtered results count and info */}
+                {(monthFilter || yearFilter) && (
+                  <div style={{ marginBottom: "16px", padding: "12px", background: "#f0f9ff", borderLeft: "4px solid #0284c7", borderRadius: "4px" }}>
+                    <p style={{ margin: 0, fontSize: "13px", color: "#0c4a6e", fontWeight: 500 }}>
+                      Showing visits for: {monthFilter && `${["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][parseInt(monthFilter)]}`} {yearFilter && `${yearFilter}`}
+                    </p>
+                  </div>
+                )}
+
+                {filteredVisits.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "40px 20px", background: "#f8fafc", borderRadius: "8px", border: "1px dashed #cbd5e1" }}>
+                    <p style={{ margin: 0, fontSize: "16px", fontWeight: 600, color: "#64748b", marginBottom: "8px" }}>
+                      No Visits Found
+                    </p>
+                    <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8" }}>
+                      {monthFilter || yearFilter 
+                        ? `No visit recorded for ${monthFilter ? `${["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][parseInt(monthFilter)]}` : ""} ${yearFilter || ""}` 
+                        : "No visits found."}
+                    </p>
+                  </div>
+                ) : (
+                  filteredVisits.map((v, idx) => (
+        <div key={v._id || idx} style={styles.visitItem}>
           <div
             key={v._id}
             style={{
@@ -1619,185 +1796,218 @@ onClick={() => {
               </div>
             )}
           </div>
-        ))}
+          </div>
+        ))
+                )}
+              </>
+            );
+          })()}
       </div>
-    </div>
-    </div>
-  ); 
+      
+        </div>
+      </div>
+
+    
+  ); 
 }
 /* ================= STYLES (UNCHANGED) ================= */
 const cardStyle: React.CSSProperties = { 
-  width: "100%",
-  boxSizing: "border-box",
-  background: "#fff",
-  color: "#000",
-  padding: 24,
-  borderRadius: 12,
-  marginBottom: 20,
-  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+  width: "100%",
+  boxSizing: "border-box",
+  background: "#FFFFFF",
+  color: "#000",
+  padding: 24,
+  borderRadius: 12,
+  marginBottom: 20,
+  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
 };
 
 const headerRow = { 
-  color:"#000",
-  display: "flex", 
-  justifyContent: "space-between" 
+  color:"#0F172A",
+  display: "flex", 
+  justifyContent: "space-between" 
 };
 const detailsGrid = { 
-  display: "grid", 
-  gridTemplateColumns: "repeat(2,1fr)", 
-  gap: 16 
+  display: "grid", 
+  gridTemplateColumns: "repeat(2,1fr)", 
+  gap: 16 
 };
 const labelStyle: React.CSSProperties = {
-  fontWeight: 600,
-  marginBottom: 4,
-  display: "block",
-  color: "#000000ff",
-};
-
-const inputStyle = { 
-  width: "100%",
-    padding: "8px 12px",
-    borderRadius: "6px",
-    border: "1px solid #e2e8f0",
-    fontSize: "14px",
-    boxSizing: "border-box", 
+  fontWeight: 600,
+  marginBottom: 4,
+  display: "block",
+  color: "#475569",
 };
 const editBtn = { 
-  background: "#2563eb", 
-  color: "#fff", 
-  padding: "6px 12px" 
+  background: "#2563eb", 
+  color: "#fff", 
+  padding: "6px 12px" 
 };
 const saveBtn = { 
-  background: "#16a34a", 
-  color: "#fff", 
-  padding: "8px 16px",
+  background: "#16a34a", 
+  color: "#fff", 
+  padding: "8px 16px",
   
 };
 const backBtn = { 
-  background: "#111827", 
-  color: "#fff", 
-  padding: "6px 12px" 
+   padding: "12px",
+    backgroundColor: "#0F172A", // Dark Navy (Professional/Authoritative)
+    color: "#ffffff",
+    borderRadius: 8,
+    border: "none",
+    fontWeight: 600,
+    fontSize: "15px",
+    cursor: "pointer",
+    transition: "background 0.2s",
 };
 const styles: any = {
-  splitRow: {
-  width: "100%",
-  display: "grid",
-  gridTemplateColumns: "60% 40%",
-  gap: 22,
-  alignItems: "flex-start",
-  overflow: "hidden",
+  card: cardStyle,
+  cardStyle: cardStyle,
+  splitRow: {
+  width: "100%",
+  display: "grid",
+  gridTemplateColumns: "60% 40%",
+  gap: 22,
+  alignItems: "flex-start",
+  overflow: "hidden",
 },
-  card: cardStyle,
-  textarea: { 
-    width: "90%", 
-    height: 90 
-  },
-  prescriptionTable: { 
-    width: "100%", 
-    marginTop: 12,
-    borderCollapse: "collapse",
-    tableLayout: "fixed",
-    tableBorder: "1px solid #5d3f3f",
-  },
-  addMedicineBtn: { 
-    marginTop: 12, 
-    padding: "6px 12px" 
-  },
-  vitalsTable: { width: "90%", overflow: "hidden" },
-  vitalLabelCell: { padding: 8 },
-  vitalInputSmall: { width: 100 },
-  bmiBox: { 
-    textAlign: "center", 
-    marginTop: 12 
-  },
-  allergiesCardRed: {
-    background: "#fff",
-    padding: 20,
-    borderRadius: 8,
-    //boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-    //borderLeft: "6px solid #ef4444", // High visibility for allergies
-    display: "flex",
-    flexDirection: "column",
-    height: "100%", 
-    boxSizing: "border-box",
-  },
+  textarea: { 
+    width: "90%", 
+    height: 90 
+  },
+inputStyle : { 
+  width: "100%",
+  backgroundColor: "#FFFFFF",
+  color: "#1E293B",
+  padding: "0 14px",
+  height: 42,
+  borderRadius: 8,
+  border: "1px solid #E2E8F0",
+  fontSize: "15px",
+  outline: "none",
+  boxSizing: "border-box",
+  transition: "border-color 0.2s, box-shadow 0.2s",
+},
+  prescriptionTable: { 
+    width: "100%", 
+    marginTop: 12,
+    borderCollapse: "collapse",
+    tableLayout: "fixed",
+    tableBorder: "1px solid #5d3f3f",
+  },
+  addMedicineBtn: { 
+    marginTop: 12, 
+    padding: "6px 12px" 
+  },
+  vitalsTable: { width: "90%", overflow: "hidden" },
+  vitalLabelCell: { padding: 8, color:"#475569" },
+  vitalInputSmall: {
+    width: "100%" as const,
+    backgroundColor: "#FFFFFF",
+    color: "#1E293B",
+    padding: "0 14px",
+    height: "42px",
+    border: "1px solid #E2E8F0",
+    borderRadius: 8,
+    fontSize: "15px",
+    outline: "none",
+    boxSizing: "border-box" as const,
+    transition: "border-color 0.2s, box-shadow 0.2s",
+  } as React.CSSProperties,
+  bmiBox: { 
+    textAlign: "center", 
+    marginTop: 12 
+  },
+  allergiesCardRed: {
+    background: "#fff",
+    padding: 20,
+    borderRadius: 8,
+    //boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
+    //borderLeft: "6px solid #ef4444", // High visibility for allergies
+    display: "flex",
+    flexDirection: "column",
+    height: "100%", 
+    boxSizing: "border-box",
+  },
 
-  fullWidthMedicalCard: {
-    fontSize: 19,
-    background: "#fff",
-    padding: 20,
-    borderRadius: 8,
-    marginBottom: 20,
-    boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-    width: "100%",
-    boxSizing: "border-box",
-  },
-  fullTextarea: {
-    width: "100%",
-    height: 120,
-    padding: "12px",
-    borderRadius: 6,
-    border: "1px solid #cbd5e1",
-    fontSize: 16,
-    fontFamily: "inherit",
-    resize: "none",
-    boxSizing: "border-box",
-  },
+  fullWidthMedicalCard: {
+    fontSize: 19,
+    background: "#fff",
+    padding: 20,
+    borderRadius: 8,
+    marginBottom: 20,
+    boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
+    width: "100%",
+    boxSizing: "border-box",
+  },
+  fullTextarea: {
+    width: "100%",
+    background: "#FFFFFF",
+    color: "#1E293B",
+    height: 120,
+    padding: "12px",
+    borderRadius: 6,
+    border: "1px solid #cbd5e1",
+    fontSize: 16,
+    fontFamily: "inherit",
+    resize: "none",
+    boxSizing: "border-box",
+  },
 
-  clinicalRow: {
+  clinicalRow: {
     color: "#000",
-    display: "grid",
-    gridTemplateColumns: "2fr 1fr", // Keeps the 2:1 ratio
-    gap: "10px",
-    width: "100%", // Ensures it spans the full container width
-    marginBottom: "20px",
-    boxSizing: "border-box",
-  },
+    display: "grid",
+    gridTemplateColumns: "2fr 1fr", // Keeps the 2:1 ratio
+    gap: "10px",
+    width: "100%", // Ensures it spans the full container width
+    marginBottom: "20px",
+    boxSizing: "border-box",
+  },
 
-  fixedHeightCard: {
-    background: "#fff",
-    padding: "20px",
-    borderRadius: "8px",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-    height: "350px", 
-    display: "flex",
-    flexDirection: "column",
-    width: "100%", // Ensures cards fill their grid columns
-    boxSizing: "border-box",
-  },
+  fixedHeightCard: {
+    background: "#fff",
+    padding: "20px",
+    borderRadius: "8px",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
+    height: "350px", 
+    display: "flex",
+    flexDirection: "column",
+    width: "100%", // Ensures cards fill their grid columns
+    boxSizing: "border-box",
+  },
 
-  scrollableContent: {
-    flex: 1,
-    overflowY: "auto", // Makes content scrollable
-    paddingRight: "5px",
-  },
+  scrollableContent: {
+    flex: 1,
+    overflowY: "auto", // Makes content scrollable
+    paddingRight: "5px",
+  },
 
-  /* ---------- Clean UI Refinements ---------- */
-  prescriptionCard: {
+  /* ---------- Clean UI Refinements ---------- */
+  prescriptionCard: {
   color: "#000",
-    width: "100%",           
-    background: "#fff",
-    padding: "24px",
-    borderRadius: "8px",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-    boxSizing: "border-box", // Prevents padding from breaking the 100% width
-    margin: "0 0 20px 0",
-  },
+    width: "100%",           
+    background: "#fff",
+    padding: "24px",
+    borderRadius: "8px",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
+    boxSizing: "border-box", // Prevents padding from breaking the 100% width
+    margin: "0 0 20px 0",
+  },
 
-  cleanTable: {
-    width: "100%",
-    borderCollapse: "separate",
-    borderSpacing: "0 8px", // Gives rows breathing room
-  },
+  cleanTable: {
+    width: "100%",
+    borderCollapse: "separate",
+    borderSpacing: "0 8px", // Gives rows breathing room
+  },
 
-  tableHeader: {
-    background: "#f8fafc",
-    color: "#64748b",
-    fontSize: "13px",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
-    padding: "12px",
-  },
+  tableHeader: {
+    background: "#f8fafc",
+    color: "#64748b",
+    fontSize: "13px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    padding: "12px",
+  },
 field: {
   display: "flex",
   flexDirection: "column",
@@ -1806,58 +2016,63 @@ field: {
   boxSizing: "border-box"
 },
 
-  noteArea: {
-    width: "100%",
-    height: "220px",
-    padding: "12px",
-    borderRadius: "8px",
-    border: "1px solid #e2e8f0",
-    background: "#fdfdfd", 
-    color: "#334155",
-    fontSize: "14px",
-    resize: "none",
-    boxSizing: "border-box",
-  },
+  noteArea: {
+    width: "100%",
+    height: "220px",
+    padding: "12px",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
+    background: "#ffffff", 
+    color: "#1E293B",
+    fontSize: "14px",
+    resize: "none",
+    boxSizing: "border-box",
+  },
 
-  // Ensure the grid wrapping the two parts stretches 100%
-  prescriptionGrid: {
-    display: "grid",
-    gridTemplateColumns: "1.8fr 1fr",
-    gap: "30px",
-    width: "100%",           // Forces the internal grid to span the whole card
-    alignItems: "start",
-  },
+  // Ensure the grid wrapping the two parts stretches 100%
+  prescriptionGrid: {
+    display: "grid",
+    gridTemplateColumns: "1.8fr 1fr",
+    gap: "30px",
+    width: "100%",           // Forces the internal grid to span the whole card
+    alignItems: "start",
+  },
 
-  primaryBtn: {
-    height: 40,
-    padding: "0 20px",
-    background: "#2563eb",
-    color: "#fff",
-    border: "none",
-    borderRadius: 6,
-  },
+  primaryBtn: {
+    height: 40,
+    padding: "0 20px",
+    background: "#2563eb",
+    color: "#fff",
+    border: "none",
+    borderRadius: 6,
+  },
 
-  /*certificates link*/
-  certificateGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-    gap: "15px",
-    width: "100%",
-    boxSizing: "border-box",
-  },
-  
-  certLink: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    padding: "12px 16px",
-    background: "#f8fafc",
-    border: "1px solid #e2e8f0",
-    borderRadius: "8px",
-    color: "#2563eb",
-    textDecoration: "none",
-    fontWeight: "500",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-  },
-  }
+  /*certificates link*/
+  certificateGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+    gap: "15px",
+    width: "100%",
+    boxSizing: "border-box",
+  },
+  
+  certLink: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    padding: "12px 16px",
+    background: "#f8fafc",
+    border: "1px solid #e2e8f0",
+    borderRadius: "8px",
+    color: "#2563eb",
+    textDecoration: "none",
+    fontWeight: "500",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+  },
+
+  visitItem: {
+    width: "100%",
+    boxSizing: "border-box",
+  },
+  }

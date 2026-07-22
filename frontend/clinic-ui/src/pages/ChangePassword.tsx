@@ -9,9 +9,9 @@ export default function ChangePassword() {
     confirmPassword: "",
   });
 
-   const [error, setError] = useState("");
+  const [error, setError] = useState("");
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
   };
@@ -25,7 +25,6 @@ export default function ChangePassword() {
       return "Passwords do not match";
     if (form.oldPassword === form.newPassword)
       return "New password must be different from old password";
-
     return "";
   };
 
@@ -48,7 +47,7 @@ export default function ChangePassword() {
       });
 
       const data = await res.json();
-       if (!res.ok) {
+      if (!res.ok) {
         setError(data.message || "Failed to change password");
         return;
       }
@@ -61,100 +60,153 @@ export default function ChangePassword() {
     }
   };
 
- return (
-  <div style={overlayStyle}>
-    <div style={popupStyle}>
-      <h3>Change Password</h3>
+  return (
+    <div style={overlayStyle}>
+      <div style={popupStyle}>
+        {/* Updated Heading Section */}
+        <div style={headerStyle}>
+          <h2 style={titleStyle}>Update Password</h2>
+          <p style={subtitleStyle}>Ensure your account stays secure</p>
+        </div>
 
-      <input
-        name="doctorName"
-        placeholder="Doctor Name"
-        value={form.doctorName}
-        onChange={handleChange}
-        style={inputStyle}
-      />
+        <input
+          name="doctorName"
+          placeholder="Doctor Name"
+          value={form.doctorName}
+          onChange={handleChange}
+          style={inputStyle}
+        />
 
-      <input
-        type="password"
-        name="oldPassword"
-        placeholder="Old Password"
-        value={form.oldPassword}
-        onChange={handleChange}
-        style={inputStyle}
-      />
+        <input
+          type="password"
+          name="oldPassword"
+          placeholder="Old Password"
+          value={form.oldPassword}
+          onChange={handleChange}
+          style={inputStyle}
+        />
 
-      <input
-        type="password"
-        name="newPassword"
-        placeholder="New Password"
-        value={form.newPassword}
-        onChange={handleChange}
-        style={inputStyle}
-      />
+        <input
+          type="password"
+          name="newPassword"
+          placeholder="New Password"
+          value={form.newPassword}
+          onChange={handleChange}
+          style={inputStyle}
+        />
 
-      <input
-        type="password"
-        name="confirmPassword"
-        placeholder="Confirm Password"
-        value={form.confirmPassword}
-        onChange={handleChange}
-        style={inputStyle}
-      />
+        <input
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          value={form.confirmPassword}
+          onChange={handleChange}
+          style={inputStyle}
+        />
 
-      {error && <div style={errorStyle}>{error}</div>}
+        {error && <div style={errorStyle}>{error}</div>}
 
-      <button onClick={submit} style={btnStyle}>
-        Change Password
-      </button>
+        <button onClick={submit} style={btnStyle}>
+          Update Password
+        </button>
+
+        <button onClick={() => window.close()} style={secondaryBtnStyle}>
+          Cancel and Close
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
 }
+
+// --- Styles ---
+
+const headerStyle: React.CSSProperties = {
+  marginBottom: "24px",
+  textAlign: "center",
+};
+
+const titleStyle: React.CSSProperties = {
+  fontSize: "22px",
+  fontWeight: 700,
+  color: "#0F172A", // Deep Navy
+  margin: 0,
+  letterSpacing: "-0.02em",
+};
+
+const subtitleStyle: React.CSSProperties = {
+  fontSize: "13px",
+  color: "#64748B", // Slate gray
+  marginTop: "6px",
+  marginInline: 0,
+};
+
 const overlayStyle: React.CSSProperties = {
   position: "fixed",
   inset: 0,
-  background: "rgba(0,0,0,0.45)",
+  background: "rgba(15, 23, 42, 0.6)", 
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  backdropFilter: "blur(4px)", 
+  zIndex: 1000,
 };
 
 const popupStyle: React.CSSProperties = {
-  width: 420,
-  padding: 28,
+  width: 400,
+  padding: "32px",
   background: "#ffffff",
-  color: "#111827",
-  textAlign: "center",
-  borderRadius: 12,
-  boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+  borderRadius: 16,
+  boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
   display: "flex",
   flexDirection: "column",
+  fontFamily: "'Inter', sans-serif",
 };
 
 const inputStyle: React.CSSProperties = {
-  width: "90%",
-  height: 40,
-  marginBottom: 12,
-  color: "#111827",
-  padding: "0 12px",
-  borderRadius: 6,
-  border: "1px solid #cbd5e1",
-  background: "#f9fafb",
+  width: "100%",
+  height: 42,
+  marginBottom: 16,
+  color: "#1E293B",
+  padding: "0 14px",
+  borderRadius: 8,
+  border: "1px solid #E2E8F0",
+  background: "#FFFFFF",
   fontSize: 14,
+  outline: "none",
+  transition: "border-color 0.2s, box-shadow 0.2s",
+  boxSizing: "border-box",
 };
 
 const btnStyle: React.CSSProperties = {
-  marginTop: 14,
-  height: 42,
-  background: "#2563eb",
+  marginTop: "10px",
+  height: "44px",
+  background: "#0F172A",
   color: "#fff",
   border: "none",
-  borderRadius: 6,
+  borderRadius: "8px",
   fontWeight: 600,
+  fontSize: "15px",
   cursor: "pointer",
 };
+
 const errorStyle: React.CSSProperties = {
-  color: "#dc2626",
-  fontSize: 13,
-  marginBottom: 6,
+  color: "#E11D48",
+  fontSize: "13px",
+  marginBottom: "12px",
+  textAlign: "center",
+  backgroundColor: "#FFF1F2",
+  padding: "8px",
+  borderRadius: "6px",
+  fontWeight: 500,
+};
+
+const secondaryBtnStyle: React.CSSProperties = {
+  marginTop: "16px",
+  background: "transparent",
+  color: "#64748B",
+  border: "none",
+  fontSize: "13px",
+  cursor: "pointer",
+  textDecoration: "none",
+  fontWeight: 500,
 };

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom"; 
 
 type Doctor = {
   firstName: string;
@@ -16,12 +17,25 @@ export default function MainLayout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [doctor, setDoctor] = useState<Doctor | null>(null);
+  const location = useLocation();
+  const [hoveredBtn, setHoveredBtn] = useState<string | null>(null);
+
+  const isActive = (path: string) => location.pathname.startsWith(path);
 
   const doctorName = doctor
   ? [doctor.firstName, doctor.middleName, doctor.lastName]
       .filter(Boolean)
       .join(" ")
   : "Doctor";
+
+  const getSidebarStyle = (id: string) => {
+  const isBtnActive = isActive(id); // Using the isActive logic from before
+  const isBtnHovered = hoveredBtn === id;
+
+  if (isBtnActive) return styles.sideBtnActive;
+  if (isBtnHovered) return styles.sideBtnHover;
+  return styles.sideBtn;
+};
 
 
   /* 🔑 Load logged-in doctor */
@@ -100,7 +114,8 @@ export default function MainLayout({ children }: { children: ReactNode }) {
 
       {/* BODY */}
       <div style={styles.body}>
-        {/* SIDEBAR */}
+
+        {/* SIDEBAR - CONSOLIDATED NAVIGATION */}
         <div
           style={{
             ...styles.sidebar,
@@ -111,30 +126,78 @@ export default function MainLayout({ children }: { children: ReactNode }) {
             {open ? "◀" : "▶"}
           </button>
 
+          {/* Profile */}
           <button
-            style={styles.sideBtn}
+            style={getSidebarStyle("/my-profile")}
+            onMouseEnter={() => setHoveredBtn("/my-profile")}
+            onMouseLeave={() => setHoveredBtn(null)}
             onClick={() => navigate("/my-profile")}
+            title="Profile"
           >
-            {open ? "My Profile" : "P"}
+            {open ? "👤 Profile" : "👤"}
           </button>
 
+          {/* Medicines */}
           <button
-            style={styles.sideBtn}
+            style={getSidebarStyle("/my-medicines")}
+            onMouseEnter={() => setHoveredBtn("/my-medicines")}
+            onMouseLeave={() => setHoveredBtn(null)}
             onClick={() => navigate("/my-medicines")}
+            title="Medicines"
           >
-            {open ? "My Medicines" : "M"}
+            {open ? "💊 Medicines" : "💊"}
+          </button>
+
+          {/* Separator */}
+          <div style={styles.separator} />
+
+          {/* Patients */}
+          <button
+            style={getSidebarStyle("/patients")}
+            onMouseEnter={() => setHoveredBtn("/patients")}
+            onMouseLeave={() => setHoveredBtn(null)}
+            onClick={() => navigate("/patients")}
+            title="Patients"
+          >
+            {open ? "👥 Patients" : "👥"}
+          </button>
+
+          {/* Visits */}
+          <button
+            style={getSidebarStyle("/visits")}
+            onMouseEnter={() => setHoveredBtn("/visits")}
+            onMouseLeave={() => setHoveredBtn(null)}
+            onClick={() => navigate("/visits")}
+            title="Visits"
+          >
+            {open ? "📋 Visits" : "📋"}
+          </button>
+
+          {/* Records */}
+          <button
+            style={getSidebarStyle("/reports")}
+            onMouseEnter={() => setHoveredBtn("/reports")}
+            onMouseLeave={() => setHoveredBtn(null)}
+            onClick={() => navigate("/reports")}
+            title="Records"
+          >
+            {open ? "📄 Records" : "📄"}
+          </button>
+
+          {/* Analytics */}
+          <button
+            style={getSidebarStyle("/analytics")}
+            onMouseEnter={() => setHoveredBtn("/analytics")}
+            onMouseLeave={() => setHoveredBtn(null)}
+            onClick={() => navigate("/analytics")}
+            title="Analytics"
+          >
+            {open ? "📊 Analytics" : "📊"}
           </button>
         </div>
 
         {/* RIGHT AREA */}
         <div style={styles.rightArea}>
-          <div style={styles.navbar}>
-            <span onClick={() => navigate("/patients")}>Patients</span>
-            <span onClick={() => navigate("/visits")}>Visits</span>
-            <span onClick={() => navigate("/reports")}>Reports</span>
-            <span onClick={() => navigate("/analytics")}>Analytics</span>
-          </div>
-
           <div style={styles.content}>{children}</div>
         </div>
       </div>
@@ -151,22 +214,29 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     flexDirection: "column",
     overflow: "hidden",
+    fontFamily: "'Inter', sans-serif",
+    background: "#F8FAFC",
   },
 
   header: {
-    height: 60,
-    background: "#3b82f6",
-    color: "#fff",
+    height: 64,
+    // Clean white header for a modern medical look
+    background: "#ffffff", 
+    color: "#0F172A",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: "0 20px",
+    padding: "0 24px",
+    borderBottom: "1px solid #E2E8F0",
+    zIndex: 50,
   },
 
   headerLeft: {
-    fontSize: 18,
-    fontWeight: 600,
+    fontSize: 20,
+    fontWeight: 700,
+    color: "#0F172A", // Deep Navy
     cursor: "pointer",
+    letterSpacing: "-0.02em",
   },
 
   headerRight: {
@@ -176,49 +246,60 @@ const styles: Record<string, React.CSSProperties> = {
   doctorArea: {
     display: "flex",
     alignItems: "center",
-    gap: 10,
+    gap: 12,
     cursor: "pointer",
+    padding: "6px 12px",
+    borderRadius: "8px",
+    transition: "background 0.2s",
   },
 
   avatar: {
-    width: 38,
-    height: 38,
-    borderRadius: "50%",
-    background: "#1e40af",
+    width: 36,
+    height: 36,
+    borderRadius: "10px", // Squircle look
+    background: "#F1F5F9",
+    color: "#0F172A",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontWeight: 600,
+    fontWeight: 700,
+    border: "1px solid #E2E8F0",
   },
 
   nameText: {
+    fontSize: "14px",
     fontWeight: 600,
-    lineHeight: "16px",
+    color: "#0F172A",
+    lineHeight: "1.2",
   },
 
   subText: {
     fontSize: 12,
-    opacity: 0.95,
-    color: "#ffffff",
+    color: "#64748B", // Slate gray
     whiteSpace: "nowrap",
   },
 
   dropdown: {
     position: "absolute",
     right: 0,
-    top: 60,
+    top: 55,
     background: "#ffffff",
-    color: "#111827",
-    borderRadius: 6,
-    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-    width: 160,
+    borderRadius: 12,
+    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    width: 180,
+    padding: "8px",
     zIndex: 100,
+    border: "1px solid #E2E8F0",
   },
 
   dropdownItem: {
-    padding: "10px 14px",
+    padding: "10px 12px",
+    fontSize: "14px",
+    fontWeight: 500,
     cursor: "pointer",
-    borderBottom: "1px solid #e5e7eb",
+    borderRadius: "6px",
+    color: "#334155",
+    transition: "background 0.2s",
   },
 
   body: {
@@ -228,54 +309,91 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   sidebar: {
-    background: "#1e293b",
+    // Primary Brand Color: Deep Navy
+    background: "#0F172A", 
     color: "#fff",
-    padding: 10,
+    padding: "16px 12px",
     display: "flex",
     flexDirection: "column",
-    gap: 10,
-    transition: "width 0.25s ease",
+    gap: 8,
+    transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
   },
 
   toggleBtn: {
-    background: "#334155",
+    background: "rgba(255,255,255,0.05)",
     border: "none",
-    color: "#fff",
-    padding: 8,
+    color: "#94A3B8",
+    padding: "8px",
+    marginBottom: "12px",
     cursor: "pointer",
+    borderRadius: "8px",
+    fontSize: "12px",
   },
 
   sideBtn: {
     background: "transparent",
-    border: "1px solid #475569",
-    color: "#fff",
-    padding: 10,
+    border: "none",
+    color: "#94A3B8", // Muted Slate
+    padding: "12px",
     cursor: "pointer",
-    borderRadius: 4,
-    textAlign: "left",
+    borderRadius: "8px",
+    textAlign: "left" as const,
+    fontSize: "14px",
+    fontWeight: 500,
+    transition: "all 0.2s ease", // Smooth fade effect
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+  },
+
+  sideBtnHover: {
+    background: "rgba(255, 255, 255, 0.08)", // Very subtle light highlight
+    border: "none",
+    color: "#F1F5F9", // Brightens the text on hover
+    padding: "12px",
+    cursor: "pointer",
+    borderRadius: "8px",
+    textAlign: "left" as const,
+    fontSize: "14px",
+    fontWeight: 500,
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    transition: "all 0.2s ease",
+  },
+
+  sideBtnActive: {
+    background: "#334155", // Solid lighter navy/slate for active state
+    border: "none",
+    color: "#FFFFFF", 
+    padding: "12px",
+    cursor: "pointer",
+    borderRadius: "8px",
+    textAlign: "left" as const,
+    fontSize: "14px",
+    fontWeight: 600,
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
   },
 
   rightArea: {
     flex: 1,
     display: "flex",
     flexDirection: "column",
-  },
-
-  navbar: {
-    height: 55,
-    background: "#e5e7eb",
-    display: "flex",
-    alignItems: "center",
-    gap: 20,
-    padding: "0 20px",
-    borderBottom: "1px solid #cbd5e1",
-    cursor: "pointer",
+    overflow: "hidden",
   },
 
   content: {
     flex: 1,
-    padding: 20,
-    background: "#f8fafc",
+    padding: "24px",
+    background: "#F8FAFC", // Softest gray-blue for working area
     overflowY: "auto",
+  },
+
+  separator: {
+    height: 1,
+    background: "rgba(255, 255, 255, 0.1)",
+    margin: "8px 0",
   },
 };

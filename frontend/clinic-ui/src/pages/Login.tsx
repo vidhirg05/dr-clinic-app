@@ -8,98 +8,110 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "#e5e7eb",
+    // Light, neutral background to reduce eye strain
+    backgroundColor: "#F1F5F9", 
+    fontFamily: "'Inter', sans-serif",
   },
 
   card: {
-    width: 520,
-    padding: 30,
-    background: "#ffffff",
-    borderRadius: 8,
-    boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
+    width: 480, // Slightly narrower for a tighter look
+    padding: "40px",
+    background: "#FFFFFF", // Pure white card on gray background looks cleaner
+    borderRadius: 16, // More rounded for a modern feel
+    // Softer, larger shadow for a "floating" effect
+    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)",
   },
 
   topLinks: {
     display: "flex",
     justifyContent: "flex-end",
     gap: 16,
-    fontSize: 14,
-    marginBottom: 10,
+    fontSize: 13,
+    marginBottom: 20,
+    color: "#64748B",
   },
 
   title: {
     textAlign: "center",
-    marginBottom: 25,
-    color: "#2563eb",
+    marginBottom: 32,
+    color: "#0F172A", // Deep Navy instead of bright blue
+    fontSize: "24px",
+    fontWeight: 700,
+    letterSpacing: "-0.025em",
   },
 
   formGrid: {
-  display: "grid",
-  gridTemplateColumns: "120px 1fr",
-  rowGap: 14,
-  columnGap: 12,
-  alignItems: "center",
-},
-
+    display: "grid",
+    gridTemplateColumns: "1fr", // Stacked layout is more modern for Login
+    rowGap: 18,
+    alignItems: "center",
+  },
 
   label: {
-  textAlign: "right",
-  fontWeight: 600,
-  color: "#374151",
-},
-
-
+    textAlign: "left",
+    fontWeight: 600,
+    fontSize: "13px",
+    color: "#475569", // Muted slate
+    marginBottom: "4px",
+    display: "block",
+  },
 
   input: {
-    backgroundColor: "#f9fafb",
-    color: "#111827",
-  height: 36,
-  padding: "0 10px",
-  border: "1px solid #9ca3af",
-  borderRadius: 4,
-  fontSize: 14,
-},
-
+    backgroundColor: "#FFFFFF",
+    color: "#1E293B",
+    height: 42, // Slightly taller for better touch/click targets
+    padding: "0 14px",
+    border: "1px solid #E2E8F0",
+    borderRadius: 8, // Matching card roundedness
+    fontSize: "15px",
+    outline: "none",
+    width: "100%",
+    transition: "border-color 0.2s, box-shadow 0.2s",
+  },
 
   buttonRow: {
     display: "flex",
-    justifyContent: "flex-end",
-    gap: 10,
-    marginTop: 22,
+    flexDirection: "column", // Stack buttons for a cleaner mobile-style look
+    gap: 12,
+    marginTop: 30,
   },
 
   loginBtn: {
-    padding: "8px 18px",
-    backgroundColor: "#16a34a",
+    padding: "12px",
+    backgroundColor: "#0F172A", // Dark Navy (Professional/Authoritative)
     color: "#ffffff",
-    borderRadius: 6,
+    borderRadius: 8,
     border: "none",
     fontWeight: 600,
+    fontSize: "15px",
     cursor: "pointer",
+    transition: "background 0.2s",
   },
 
   resetBtn: {
-    padding: "8px 18px",
-    backgroundColor: "#e5e7eb",
-    borderRadius: 6,
-    border: "none",
-    color: "#6b7280",
-    //cursor: "not-allowed",
+    padding: "10px",
+    backgroundColor: "transparent",
+    borderRadius: 8,
+    border: "1px solid #E2E8F0",
+    color: "#64748B",
+    fontSize: "14px",
+    cursor: "pointer",
   },
 
+  // Cancel buttons in login are rare, but if kept, make it a text link or muted
   cancelBtn: {
-    padding: "8px 18px",
-    backgroundColor: "#dc2626",
-    color: "#ffffff",
-    borderRadius: 6,
+    padding: "10px",
+    backgroundColor: "transparent",
+    color: "#94A3B8",
+    borderRadius: 8,
     border: "none",
-    fontWeight: 600,
+    fontSize: "13px",
     cursor: "pointer",
   },
 
   registerRow: {
-    color: "#374151",
-    marginTop: 18,
+    color: "#64748B",
+    marginTop: 24,
     display: "flex",
     justifyContent: "center",
     gap: 6,
@@ -107,16 +119,20 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 
   link: {
-    color: "#2563eb",
+    color: "#2563EB",
+    fontWeight: 600,
     cursor: "pointer",
-    textDecoration: "underline",
+    textDecoration: "none", // Underlines feel cluttered; bolding is cleaner
   },
 
   error: {
-    color: "#dc2626",
+    color: "#E11D48", // Softer red
     fontSize: 13,
-    marginTop: 10,
+    marginTop: 12,
     textAlign: "center",
+    backgroundColor: "#FFF1F2", // Added background for visibility
+    padding: "8px",
+    borderRadius: "6px",
   },
 };
 

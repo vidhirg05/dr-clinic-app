@@ -16,7 +16,8 @@ export default function Home() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        background: "#f8fafc",
+        // Soft Slate background for a professional feel
+        background: "#F8FAFC", 
       }}
     >
       {/* IMAGE AREA */}
@@ -28,6 +29,8 @@ export default function Home() {
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
           backgroundSize: "contain",
+          // Subtle opacity helps the image blend into the background
+          opacity: 0.9, 
         }}
       />
 
@@ -41,9 +44,11 @@ export default function Home() {
         <h1
           style={{
             fontSize: 28,
-            fontWeight: 600,
-            color: "#0f172a",
+            fontWeight: 700,
+            // Deep Navy (Primary brand color)
+            color: "#0F172A", 
             margin: 0,
+            letterSpacing: "-0.02em",
           }}
         >
           Welcome, {doctorName}
@@ -51,9 +56,11 @@ export default function Home() {
 
         <p
           style={{
-            marginTop: 6,
+            marginTop: 8,
             fontSize: 15,
-            color: "#475569",
+            // Muted Slate (Secondary text color)
+            color: "#64748B", 
+            fontWeight: 500,
           }}
         >
           Have a productive day at MyClinic

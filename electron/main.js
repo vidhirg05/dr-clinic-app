@@ -67,15 +67,28 @@ app.on("window-all-closed", () => {
 
 ipcMain.handle("login-doctor", async (_, data) => {
   try {
+    console.log("Attempting login to:", `${API_URL}/auth/login`);
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    return await res.json();
+
+    console.log("Response status:", res.status);
+    console.log("Response headers:", res.headers);
+
+    // Check if response is ok
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("API error response:", text);
+      return { success: false, message: `API Error: ${res.status} ${res.statusText}` };
+    }
+
+    const jsonResponse = await res.json();
+    return jsonResponse;
   } catch (err) {
-    console.error(err);
-    return { success: false, message: "Login failed" };
+    console.error("Login error:", err);
+    return { success: false, message: `Login failed: ${err.message}` };
   }
 });
 
@@ -83,6 +96,7 @@ ipcMain.handle("login-doctor", async (_, data) => {
 
 ipcMain.handle("register-with-clinic", async (_, data) => {
   try {
+    console.log("Attempting registration to:", `${API_URL}/auth/register-with-clinic`);
     const res = await fetch(
       `${API_URL}/auth/register-with-clinic`,
       {
@@ -92,10 +106,18 @@ ipcMain.handle("register-with-clinic", async (_, data) => {
       }
     );
 
-    return await res.json();
+    console.log("Response status:", res.status);
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("API error response:", text);
+      return { success: false, message: `API Error: ${res.status} ${res.statusText}` };
+    }
+
+    const jsonResponse = await res.json();
+    return jsonResponse;
   } catch (err) {
     console.error("register-with-clinic IPC error:", err);
-    return { success: false, message: "IPC failed" };
+    return { success: false, message: `Registration failed: ${err.message}` };
   }
 });
 
@@ -141,7 +163,7 @@ ipcMain.handle("open-change-window", () => {
 
   changeWindow = new BrowserWindow({
     width: 480,
-    height: 420,
+    height: 600,
     modal: true,
     // Safely check if mainWindow exists before assigning as parent
     parent: mainWindow || null, 

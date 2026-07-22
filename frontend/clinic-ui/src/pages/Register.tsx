@@ -181,7 +181,7 @@ const handleFinalSave = async () => {
           </div>
 
           {/* ROW 2 */}
-          <div style={styles.row2}>
+          <div style={styles.row3}>
             <Field label="Mobile No *" name="mobile" onChange={handleChange} />
             <Field label="Email ID *" name="email" onChange={handleChange} />
           </div>
@@ -259,89 +259,65 @@ const handleFinalSave = async () => {
         )}
         
          
-        {/*CLINIC FORM */}
+        {/* CLINIC FORM */}
         {activeTab === "clinic" && (
-          <>   
-          <div style={styles.formBox}>
-            <div style={styles.row2}>
-              <Field label="Clinic Name *" name="name" onChange={handleClinicChange} />
-              <Field
-                label="Clinic Ph No *"
-                name="phones"
-                onChange={handleClinicChange}
-              />
-            </div>
-
-            <div style={styles.row2}>
-              <Field label="Address *" name="address" onChange={handleClinicChange} />
-              <Field label="City *" name="city" onChange={handleClinicChange} />
-            </div>
-
-            <div style={styles.row2}>
-              <Field label="State *" name="state" onChange={handleClinicChange} />
-              <Field label="Pin Code *" name="pin" onChange={handleClinicChange} />
-            </div>
-
-            {/* TIMINGS */}
-            <div style={styles.row2}>
-              <div>
-                <h4>Clinic Timings</h4>
-                <div style={styles.timeRow}>
-                  <label>Morning</label>
-                  <input
-                    type="time"
-                    name="morningFrom"
-                    value={clinic.morningFrom}
-                    onChange={handleClinicChange}
-                  />
-
-                  <input
-                    type="time"
-                    name="morningTo"
-                    value={clinic.morningTo}
-                    onChange={handleClinicChange}
-                  />
-                </div>
-
-                <div style={styles.timeRow}>
-                  <label>Evening</label>
-                  <input
-                    type="time"
-                    name="eveningFrom"
-                    value={clinic.eveningFrom}
-                    onChange={handleClinicChange}
-                  />
-
-                  <input
-                    type="time"
-                    name="eveningTo"
-                    value={clinic.eveningTo}
-                    onChange={handleClinicChange}
-                  />
-                </div>
+          <>
+            <div style={styles.formBox}>
+              <h4 style={styles.boxTitle}>General Information</h4>
+              <div style={styles.row2}>
+                <Field label="Clinic Name *" name="name" value={clinic.name} onChange={handleClinicChange} />
+                <Field label="Clinic Ph No *" name="phones" value={clinic.phones} onChange={handleClinicChange} />
               </div>
 
-              {/* CLOSED DAYS */}
-                <div style={styles.closedBox}>
-                  <h4 style={styles.closedTitle}>Closed On</h4>
+              <div style={styles.row2}>
+                <Field label="Address *" name="address" value={clinic.address} onChange={handleClinicChange} />
+                <Field label="City *" name="city" value={clinic.city} onChange={handleClinicChange} />
+              </div>
 
-                  <div style={styles.closedList}>
+              <div style={styles.row2}>
+                <Field label="State *" name="state" value={clinic.state} onChange={handleClinicChange} />
+                <Field label="Pin Code *" name="pin" value={clinic.pin} onChange={handleClinicChange} />
+              </div>
+
+              <div style={styles.row2}>
+                {/* TIMINGS */}
+                <div style={styles.timingSection}>
+                  <h4 style={styles.boxTitle}>Clinic Timings</h4>
+                  <div style={styles.timeFieldGroup}>
+                    <label style={styles.label}>Morning Session</label>
+                    <div style={styles.timeRow}>
+                      <input type="time" name="morningFrom" value={clinic.morningFrom} onChange={handleClinicChange} style={styles.timeInput} />
+                      <span style={{ color: "#94A3B8" }}> - </span>
+                      <input type="time" name="morningTo" value={clinic.morningTo} onChange={handleClinicChange} style={styles.timeInput} />
+                    </div>
+                  </div>
+
+                  <div style={styles.timeFieldGroup}>
+                    <label style={styles.label}>Evening Session</label>
+                    <div style={styles.timeRow}>
+                      <input type="time" name="eveningFrom" value={clinic.eveningFrom} onChange={handleClinicChange} style={styles.timeInput} />
+                      <span style={{ color: "#94A3B8" }}> - </span>
+                      <input type="time" name="eveningTo" value={clinic.eveningTo} onChange={handleClinicChange} style={styles.timeInput} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* CLOSED DAYS */}
+                <div style={styles.closedBox}>
+                  <h4 style={styles.boxTitle}>Closed On</h4>
+                  <div style={styles.closedGrid}>
                     {[
-                      "Sunday",
-                      "Monday",
-                      "Tuesday",
-                      "Wednesday",
-                      "Thursday",
-                      "Friday",
-                      "Saturday",
+                      "Sunday", "Monday", "Tuesday", "Wednesday",
+                      "Thursday", "Friday", "Saturday",
                     ].map((day) => (
                       <label key={day} style={styles.closedItem}>
                         <input
                           type="checkbox"
                           checked={clinic.closedDays.includes(day)}
                           onChange={() => toggleClosedDay(day)}
+                          style={styles.checkbox}
                         />
-                        <span>{day}</span>
+                        <span style={{ fontSize: "14px", color: "#1E293B" }}>{day}</span>
                       </label>
                     ))}
                   </div>
@@ -350,17 +326,12 @@ const handleFinalSave = async () => {
 
               {/* FINAL ACTIONS */}
               <div style={styles.actions}>
-                <button style={styles.saveBtn} onClick={handleFinalSave}>Login Now</button>
-                <button
-                  style={styles.loginNowBtn}
-                  onClick={() => navigate("/login")}
-                >
-                  Cancel
-                </button>
+                <button style={styles.saveBtn} onClick={handleFinalSave}>Complete Registration</button>
+                <button style={styles.cancelBtn} onClick={() => navigate("/login")}>Cancel</button>
               </div>
             </div>
-            </>
-          )}
+          </>
+        )}
             {error && <div style={styles.error}>{error}</div>} 
               </div>
             </div>
@@ -427,223 +398,252 @@ function SelectField({
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
-  background: "#e5e7eb",
-  height: "100vh",        // 🔑 lock page height
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-},
+    background: "#F1F5F9", // Consistent soft gray/blue
+    height: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontFamily: "'Inter', sans-serif",
+  },
 
   card: {
-  background: "#fff",
-  borderRadius: 10,
-  padding: 30,
-  maxWidth: 1200,
-  width: "100%",
-  maxHeight: "90vh",      // 🔑 key line
-  overflowY: "auto",      // 🔑 enables scrolling
-  scrollbarWidth:"thin",
-},
+    background: "#ffffff",
+    borderRadius: 16,
+    padding: "40px",
+    maxWidth: 1000, // Slightly tighter for better readability
+    width: "95%",
+    maxHeight: "90vh",
+    overflowY: "auto",
+    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)",
+    scrollbarWidth: "thin",
+  },
 
   header: {
     position: "relative",
     textAlign: "center",
-    marginBottom: 25,
+    marginBottom: "32px",
+    paddingBottom: "16px",
+    borderBottom: "1px solid #E2E8F0",
   },
+
   title: {
-    color: "#2563eb",
-    fontSize: 26,
-    fontWeight: 600,
+    color: "#0F172A", // Deep Navy
+    fontSize: "26px",
+    fontWeight: 700,
+    letterSpacing: "-0.02em",
   },
+
   mandatory: {
     position: "absolute",
     right: 0,
-    top: "50%",
-    transform: "translateY(-50%)",
-    color: "red",
-    fontSize: 13,
+    bottom: "20px",
+    color: "#E11D48", // Soft Red
+    fontSize: "12px",
+    fontWeight: 500,
+  },
+
+  // Section grouping containers
+  formBox: {
+    background: "#F8FAFC", // Very subtle offset from card
+    padding: "24px",
+    borderRadius: "12px",
+    border: "1px solid #E2E8F0", // Replaced 2px black
+    marginBottom: "24px",
+  },
+
+  boxTitle: {
+    color: "#475569",
+    fontSize: "14px",
+    fontWeight: 700,
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+    marginBottom: "20px",
+    textAlign: "left" as const,
+  },
+
+  row3: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: "20px",
+    marginBottom: "20px",
+  },
+
+  row2: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "20px",
+    marginBottom: "20px",
+  },
+
+  field: {
+    display: "flex",
+    flexDirection: "column", // Stacked labels look cleaner in busy forms
+    gap: "8px",
+  },
+
+  label: {
+    color: "#334155",
+    fontSize: "13px",
+    fontWeight: 600,
+    textAlign: "left" as const,
+  },
+
+  input: {
+    color: "#1E293B",
+    height: "40px",
+    backgroundColor: "#ffffff",
+    border: "1px solid #CBD5E1",
+    borderRadius: "8px", // Subtle rounding
+    padding: "0 12px",
+    fontSize: "14px",
+    transition: "all 0.2s ease",
+    outline: "none",
   },
 
   select: {
-  color:"#000000",
-  flex: 1,
-  height: 30,
-  border: "2px solid #000",
-  padding: "0 6px",
-  background: "#fff",
-},
-
-  formBox: {
-    color:"#000000",
-    border: "2px solid #000",
-    padding: 25,
+    color: "#1E293B",
+    height: "40px",
+    border: "1px solid #CBD5E1",
+    borderRadius: "8px",
+    padding: "0 10px",
+    background: "#fff",
+    fontSize: "14px",
+    outline: "none",
   },
-  row3: {
-  display: "grid",
-  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-  gap: 16,
-  marginBottom: 20,
-},
 
-  row2: {
-    color:"#000000",
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: 20,
-    marginBottom: 20,
-  },
-  field: {
+  // Tab Navigation
+  tabs: {
     display: "flex",
-    alignItems: "center",
-    gap: 25,
+    gap: "8px",
+    marginBottom: "24px",
+    borderBottom: "1px solid #E2E8F0",
+    paddingBottom: "12px",
   },
-  label: {
-  color:"#000000",
-  width: 120,   // 🔑 was 150 (too large for 3 columns)
-  textAlign: "right",
-  fontWeight: 500,
-  whiteSpace: "nowrap",
-},
 
-  smallLabel: {
-    fontSize: 14,
-    marginBottom: 6,
+  tab: {
+    padding: "10px 20px",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: 500,
+    color: "#64748B",
+    cursor: "pointer",
+    transition: "all 0.2s",
   },
-  input: {
-  color:"#000000",
-  flex: 1,
-  backgroundColor: "#ffffff",
-  //minWidth: 0, // 🔑 VERY IMPORTANT
-  height: 30,
-  border: "2px solid #000",
-  padding: "0 8px",
-},
 
-  addressBox: {
-    color:"#000000",
-    border: "1px solid #000",
-    padding: 15,
+  activeTab: {
+    padding: "10px 20px",
+    background: "#0F172A", // Deep Navy background for active
+    color: "#ffffff",
+    borderRadius: "8px",
+    fontWeight: 600,
+    cursor: "pointer",
   },
-  photoBox: {
-    border: "1px solid #000",
-    padding: 15,
-    color:"#000000",
+
+  disabledTab: {
+    padding: "10px 20px",
+    color: "#CBD5E1",
+    cursor: "not-allowed",
+    background: "transparent",
   },
-  boxTitle: {
-    color:"#000000",
-    textAlign: "center",
-    marginBottom: 12,
-  },
-  success: {
-    color: "green",
-    fontSize: 13,
-    marginTop: 6,
-    display: "block",
-  },
+
+  // Action Buttons
   actions: {
     display: "flex",
     justifyContent: "flex-end",
-    gap: 12,
-    marginTop: 20,
+    gap: "12px",
+    marginTop: "32px",
+    paddingTop: "20px",
+    borderTop: "1px solid #E2E8F0",
   },
+
   saveBtn: {
-    background: "#16a34a",
+    background: "#0F172A", // Using primary navy instead of green for "Save"
     color: "#fff",
     border: "none",
-    padding: "10px 20px",
-    borderRadius: 6,
+    padding: "12px 24px",
+    borderRadius: "8px",
+    fontWeight: 600,
     cursor: "pointer",
+    transition: "opacity 0.2s",
   },
+
   cancelBtn: {
-    background: "#dc2626",
-    color: "#fff",
-    border: "none",
-    padding: "10px 20px",
-    borderRadius: 6,
+    background: "transparent",
+    color: "#64748B",
+    border: "1px solid #E2E8F0",
+    padding: "12px 24px",
+    borderRadius: "8px",
+    fontWeight: 600,
     cursor: "pointer",
   },
+
   error: {
-    color: "red",
-    marginTop: 15,
+    color: "#E11D48",
+    fontSize: "13px",
+    marginTop: "15px",
+    backgroundColor: "#FFF1F2",
+    padding: "10px",
+    borderRadius: "8px",
+    textAlign: "center" as const,
   },
 
-  tabs: {
-  color:"#000000",
-  display: "flex",
-  gap: 10,
-  marginBottom: 20,
-},
 
-tab: {
-  color:"#000000",
-  padding: "8px 16px",
-  border: "1px solid #000",
-  cursor: "pointer",
-},
+  // ... (previous styles like page, card, etc remain same)
 
-activeTab: {
-  padding: "8px 16px",
-  border: "2px solid #153579",
-  fontWeight: 600,
-  cursor: "pointer",
-},
-disabledTab: {
-  padding: "8px 16px",
-  border: "1px solid #999",
-  color: "#999",
-  cursor: "not-allowed",
-  background: "#f3f4f6",
-},
+  timingSection: {
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: "16px",
+  },
 
-timeRow: {
-  width: "70%",
-  fontWeight: 500,
-  color:"#000000",
-  display: "flex",
-  alignItems: "center",
-  gap: 8,
-  marginBottom: 8,
-},
+  timeFieldGroup: {
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: "8px",
+  },
 
-checkboxRow: {
-  color:"#000000",
-  display: "flex",
-  alignItems: "center",
-  gap: 6,
-},
-closedBox: {
-  color:"#000000",
-  border: "1px solid #000",
-  padding: 15,
-},
+  timeRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+  },
 
-closedTitle: {
-  alignItems: "center",
-  color:"#000000",
-  marginBottom: 10,
-  fontWeight: 600,
-},
+  timeInput: {
+    flex: 1,
+    height: "40px",
+    border: "1px solid #CBD5E1",
+    borderRadius: "8px",
+    padding: "0 10px",
+    fontSize: "14px",
+    color: "#CBD5E1",
+    outline: "none",
+  },
 
-closedList: {
-  display: "flex",
-  flexDirection: "column",
-  gap: 6,
-},
+  closedBox: {
+    background: "#ffffff",
+    padding: "20px",
+    borderRadius: "12px",
+    border: "1px solid #E2E8F0",
+  },
 
-closedItem: {
-  display: "flex",
-  alignItems: "center",
-  gap: 8,
-  fontSize: 14,
-},
+  closedGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr", // Two columns for days looks cleaner
+    gap: "10px",
+  },
 
-loginNowBtn: {
-  background: "#16a34a",
-  color: "#fff",
-  padding: "10px 18px",
-  borderRadius: 6,
-  border: "none",
-  cursor: "pointer",
-},
+  closedItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    cursor: "pointer",
+    padding: "4px 0",
+  },
 
-}
+  checkbox: {
+    width: "18px",
+    height: "18px",
+    cursor: "pointer",
+    accentColor: "#0F172A", // Matches the Navy theme
+  }
+};

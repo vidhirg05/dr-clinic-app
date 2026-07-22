@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { API_URL } from "../config/api";
 
 /* ---------------- TYPES ---------------- */
@@ -141,8 +141,6 @@ const loadProfile = async (doctorId: string) => {
   }
 };
 
-
-
   if (!doctor || !form) return null;
 
   /* ---------------- UI ---------------- */
@@ -274,15 +272,29 @@ const loadProfile = async (doctorId: string) => {
       <h4 style={styles.boxTitle}>Clinic Timings</h4>
 
       <div style={styles.timeRow}>
-        <label>Morning</label>
-        <input type="time" name="morningFrom" value={clinic.morningFrom} onChange={handleClinicChange} />
-        <input type="time" name="morningTo" value={clinic.morningTo} onChange={handleClinicChange} />
+        <label style={styles.label}>Morning</label>
+        <input 
+          type="time" 
+          name="morningFrom" 
+          style={styles.inputBox} // Apply the style here
+          value={clinic.morningFrom} 
+          onChange={handleClinicChange} 
+          disabled={!editMode} 
+        />
+        <input 
+          type="time" 
+          name="morningTo" 
+          style={styles.inputBox} // And here
+          value={clinic.morningTo} 
+          onChange={handleClinicChange} 
+          disabled={!editMode}
+        />
       </div>
 
       <div style={styles.timeRow}>
-        <label>Evening</label>
-        <input type="time" name="eveningFrom" value={clinic.eveningFrom} onChange={handleClinicChange} />
-        <input type="time" name="eveningTo" value={clinic.eveningTo} onChange={handleClinicChange} />
+        <label style={styles.label}>Evening</label>
+        <input type="time" name="eveningFrom" style={styles.inputBox} value={clinic.eveningFrom} onChange={handleClinicChange} disabled={!editMode} />
+        <input type="time" name="eveningTo" style={styles.inputBox} value={clinic.eveningTo} onChange={handleClinicChange} disabled={!editMode} />
       </div>
     </div>
 
@@ -344,12 +356,28 @@ function Row({
   label: string;
   value: string;
   edit: boolean;
-  children: React.ReactNode;
+  children: React.ReactElement; // Changed to ReactElement to allow cloning
 }) {
-  return (
+  const [isFocused, setIsFocused] = useState(false);
+
+ return (
     <div style={styles.row}>
       <span style={styles.label}>{label}</span>
-      {edit ? <div style={styles.inputBox}>{children}</div> : <span>{value}</span>}
+      {edit ? (
+        <div style={{ flex: 1 }}>
+          {/* We inject the styles directly into the input child */}
+          {React.cloneElement(children as React.ReactElement<any>, {
+            onFocus: () => setIsFocused(true),
+            onBlur: () => setIsFocused(false),
+            style: {
+              ...styles.inputBox,
+              ...(isFocused ? styles.inputFocus : {}),
+            },
+          })}
+        </div>
+      ) : (
+        <span style={styles.labelValue}>{value}</span>
+      )}
     </div>
   );
 }
@@ -357,20 +385,168 @@ function Row({
 /* ---------------- STYLES ---------------- */
 
 const styles: Record<string, React.CSSProperties> = {
-  page: { color: "#000", padding: 30, display: "flex", justifyContent: "center" },
-  card: { width: 900, background: "#fff", padding: 30, borderRadius: 8 },
-  header: { display: "flex", justifyContent: "space-between", marginBottom: 20 },
-  editBtn: { background: "#2563eb", color: "#fff", padding: "8px 16px", border: "none" },
-  tabs: { display: "flex", gap: 12, marginBottom: 20 },
-  tab: { padding: "8px 16px", border: "1px solid #ccc", cursor: "pointer" },
-  activeTab: { padding: "8px 16px", border: "2px solid #2563eb", fontWeight: 600 },
-  row: { display: "flex", gap: 20, alignItems: "center" },
-  label: { width: 200, fontWeight: 600 },
-  inputBox: { flex: 1 },
-  row2: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginTop: 30 },
-  addressBox: { border: "1px solid #ccc", padding: 20 },
-  photoBox: { border: "1px solid #ccc", padding: 20, textAlign: "center" },
-  boxTitle: { textAlign: "center", marginBottom: 12 },
-  actions: { marginTop: 30, textAlign: "right" },
-  saveBtn: { background: "#16a34a", color: "#fff", padding: "10px 24px", border: "none" },
+  page: { 
+    color: "#0F172A", 
+    padding: "40px", 
+    display: "flex", 
+    justifyContent: "center",
+    background: "#F8FAFC", // Matches MainLayout content background
+    minHeight: "100%",
+  },
+
+  card: { 
+    width: 900, 
+    background: "#ffffff", 
+    padding: "40px", 
+    borderRadius: 16,
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05)",
+    border: "1px solid #E2E8F0",
+  },
+
+  header: { 
+    display: "flex", 
+    justifyContent: "space-between", 
+    alignItems: "center",
+    marginBottom: "30px",
+    paddingBottom: "20px",
+    borderBottom: "1px solid #F1F5F9",
+  },
+
+  editBtn: { 
+    background: "#0F172A", // Deep Navy instead of bright blue
+    color: "#fff", 
+    padding: "10px 20px", 
+    border: "none",
+    borderRadius: "8px",
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "opacity 0.2s",
+  },
+
+  tabs: { 
+    display: "flex", 
+    gap: "12px", 
+    marginBottom: "32px",
+  },
+
+  tab: { 
+    padding: "10px 20px", 
+    border: "1px solid #E2E8F0", 
+    borderRadius: "8px",
+    background: "#fff",
+    color: "#64748B",
+    fontSize: "14px",
+    fontWeight: 500,
+    cursor: "pointer",
+    transition: "all 0.2s",
+  },
+
+  activeTab: { 
+    padding: "10px 20px", 
+    border: "1px solid #0F172A", 
+    background: "#0F172A", // Solid Navy background for active
+    color: "#ffffff",
+    borderRadius: "8px",
+    fontWeight: 600, 
+    fontSize: "14px",
+    cursor: "pointer",
+  },
+
+  row: { 
+    display: "flex", 
+    gap: "24px", 
+    alignItems: "center", 
+    marginBottom: "12px", // Tightened gap slightly
+    minHeight: "42px"     // Ensures height doesn't jump when editing
+  },
+
+  label: { 
+    width: 180, 
+    fontWeight: 600, 
+    color: "#475569", // Slate label
+    fontSize: "14px"
+  },
+
+  labelValue: {
+    flex: 1,
+    fontSize: "15px",
+    color: "#1E293B",
+    padding: "0 14px",    // Match input padding so text doesn't shift left
+    fontWeight: 500,
+  },
+  
+  inputBox: { 
+    flex: 1,
+    height: "42px",
+    padding: "0 14px",
+    fontSize: "15px",
+    color: "#1E293B",
+    background: "#FFFFFF",
+    borderRadius: "8px",
+    border: "1px solid #CBD5E1", // Login page border color
+    outline: "none",
+    transition: "all 0.2s ease",
+    width: "100%",
+    boxSizing: "border-box",
+  },
+  inputFocus: {
+    borderColor: "#0F172A",   // Navy border from Login focus
+    boxShadow: "0 0 0 3px rgba(15, 23, 42, 0.1)", // Subtle Navy glow
+    background: "#FFFFFF",
+  },
+  timeRow: {
+    display: "flex",
+    gap: "10px",
+    alignItems: "center",
+    marginTop: "10px"
+  },
+
+  row2: { 
+    display: "grid", 
+    gridTemplateColumns: "1fr 1fr", 
+    gap: "24px", 
+    marginTop: "40px" 
+  },
+
+  addressBox: { 
+    background: "#F8FAFC",
+    border: "1px solid #E2E8F0", 
+    padding: "24px",
+    borderRadius: "12px" 
+  },
+
+  photoBox: { 
+    background: "#F8FAFC",
+    border: "1px solid #E2E8F0", 
+    padding: "24px", 
+    textAlign: "center" as const,
+    borderRadius: "12px" 
+  },
+
+  boxTitle: { 
+    textAlign: "left" as const, 
+    marginBottom: "20px",
+    fontSize: "14px",
+    fontWeight: 700,
+    color: "#0F172A",
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.05em",
+  },
+
+  actions: { 
+    marginTop: "40px", 
+    textAlign: "right" as const,
+    paddingTop: "24px",
+    borderTop: "1px solid #F1F5F9",
+  },
+
+  saveBtn: { 
+    background: "#16a34a", // Keeping Green for "Save" is okay, but use a cleaner shade
+    color: "#fff", 
+    padding: "12px 32px", 
+    border: "none",
+    borderRadius: "8px",
+    fontWeight: 600,
+    cursor: "pointer",
+  },
 };

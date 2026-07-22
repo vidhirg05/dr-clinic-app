@@ -9,159 +9,218 @@ const styles: any = {
 
   /* ---------- GENERAL ---------- */
  page: {
-  width: "100%",
-  padding: "20px",
-  backgroundColor: "#f1f5f9",
-  color: "#1e293b",
-  minHeight: "100vh",
-  boxSizing: "border-box", // Crucial for 100% stretch
-},
+    width: "100%",
+    padding: "24px 0",
+    backgroundColor: "#f8fafc",
+    color: "#0f172a",
+    minHeight: "100vh",
+    boxSizing: "border-box",
+    overflowX: "hidden",
+  },
 
   container: {
-    maxWidth: 1200,
+    maxWidth: "1200px",
     margin: "0 auto",
-    padding: "0 16px",
+    padding: "0 24px",
   },
 
   title: {
-    textAlign: "center",
-    marginBottom: 20,
+    textAlign: "left",
+    marginBottom: 24,
+    fontWeight: 700,
+    fontSize: "24px",
+    letterSpacing: "-0.02em",
   },
 
   field: {
   display: "flex",
-  flexDirection: "column",
-  gap: 6,
-  width: "70%",
+    flexDirection: "column",
+    gap: 6,
+    width: "100%", // Adjusted from 70% to be more responsive
 },
 
   card: {
     width: "100%",
-    height:"95%",
-    fontSize: 19,
     background: "#fff",
-    padding: 20,
-    borderRadius: 8,
-    marginBottom: 10,
-    boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
+    padding: "32px",
+    borderRadius: 12,
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
+    border: "1px solid #e2e8f0",
+    boxSizing: "border-box",
+    margin: "0 0 24px 0",
   },
 /* ---------- Search ---------- */
   fullWidthCard: {
-  fontSize: 19,
-  background: "#fff",
-  padding: 20,
-  borderRadius: 8,
-  marginBottom: 10,
-  boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-  width: "100%",
-},
+    background: "#fff",
+    padding: "32px",
+    borderRadius: 12,
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
+    width: "100%",
+    border: "1px solid #e2e8f0",
+    boxSizing: "border-box",
+    margin: "0 0 24px 0",
+  },
 
   input: {
-    color:"#ffffff",
-    width: "98%",
-    height: 36,
-    padding: "0 10px",
-    borderRadius: 6,
+    color: "#1e293b",
+    width: "90%", // Changed to 100% to fill grid/field containers
+    height: 42,
+    padding: "0 14px",
+    borderRadius: 8,
     border: "1px solid #cbd5e1",
+    fontSize: "14px",
+    outline: "none",
+    transition: "all 0.2s ease",
+    background: "#ffffff",
   },
+
+  inputFocus: {
+  borderColor: "#0f172a", // Navy focus from login
+  boxShadow: "0 0 0 3px rgba(15, 23, 42, 0.1)",
+  background: "#ffffff",
+},
 
   searchRow: {
-  display: "grid",
-  gridTemplateColumns: "1.5fr 1fr 120px",
-  gap: 20,
-  alignItems: "flex-end",
-},
+    display: "grid",
+    gridTemplateColumns: "1.5fr 1fr 140px",
+    gap: 20,
+    alignItems: "flex-end",
+  },
 
 searchTable: {
-  width: "100%",
-  marginTop: 20,
-  borderCollapse: "collapse",
-  tableLayout: "fixed",
+    width: "100%",
+    marginTop: 24,
+    borderCollapse: "collapse" as const,
   },
+
   noResult: {
-  marginTop: 24,
-  textAlign: "center",
-  fontSize: 16,
-  fontWeight: 500,
-  color: "#6b7280",
-},
+    marginTop: 32,
+    textAlign: "center",
+    fontSize: 15,
+    fontWeight: 500,
+    color: "#94a3b8",
+  },
 th: {
-  padding: "12px 10px",
-  fontWeight: 600,
-  borderBottom: "2px solid #e5e7eb",
-  textAlign: "center",
-},
+    padding: "16px 12px",
+    fontWeight: 700,
+    background: "#f8fafc",
+    color: "#64748b",
+    fontSize: "12px",
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+    borderBottom: "2px solid #e2e8f0",
+    textAlign: "center",
+  },
 
 td: {
-  padding: "12px 10px",
-  borderBottom: "1px solid #e5e7eb",
-  textAlign: "center",
-  fontSize: 15,
-},
+    padding: "16px 12px",
+    borderBottom: "1px solid #f1f5f9",
+    textAlign: "center",
+    fontSize: "14px",
+    color: "#334155",
+  },
 
 /* ---------- Personal Details ---------- */
   grid3: {
     display: "grid",
     gridTemplateColumns: "repeat(3, 1fr)",
-    gap: 20,
+    gap: 24,
   },
 
 
-  /*Allergies*/ 
+
   /* ---------- Allergy + Vitals card ---------- */
   allergiesCardRed: {
     background: "#fff",
-    padding: 20,
-    borderRadius: 8,
-    //boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-    //borderLeft: "6px solid #ef4444", // High visibility for allergies
+    padding: "32px",
+    borderRadius: 12,
+    border: "1px solid #fee2e2", // Very subtle red border for warning context
     display: "flex",
     flexDirection: "column",
-    height: "100%", 
+    height: "100%",
     boxSizing: "border-box",
+    width: "100%",
+    margin: "0 0 24px 0",
   },
 
   fullWidthMedicalCard: {
     fontSize: 19,
     background: "#fff",
-    padding: 20,
+    padding: 32,
     borderRadius: 8,
-    marginBottom: 20,
     boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
     width: "100%",
     boxSizing: "border-box",
+    margin: "0 0 24px 0",
   },
   fullTextarea: {
-    width: "100%",
-    height: 120,
-    padding: "12px",
-    borderRadius: 6,
-    border: "1px solid #cbd5e1",
-    fontSize: 16,
-    fontFamily: "inherit",
-    resize: "none",
-    boxSizing: "border-box",
-  },
+  width: "100%",
+  height: 120,
+  padding: "14px",
+  borderRadius: 8,
+  border: "1px solid #cbd5e1", // Login border color
+  fontSize: "14px",
+  fontFamily: "inherit",
+  resize: "none" as const,
+  boxSizing: "border-box",
+  outline: "none",
+  transition: "all 0.2s ease",
+  background: "#ffffff",
+  color: "#1e293b",
+},
 
-  clinicalRow: {
+ clinicalRow: {
     display: "grid",
-    gridTemplateColumns: "2fr 1fr", // Keeps the 2:1 ratio
-    gap: "10px",
-    width: "100%", // Ensures it spans the full container width
-    marginBottom: "20px",
-    boxSizing: "border-box",
+    gridTemplateColumns: "2fr 1fr",
+    gap: "24px",
+    width: "100%",
+    marginBottom: "24px",
   },
 
   fixedHeightCard: {
     background: "#fff",
-    padding: "20px",
-    borderRadius: "8px",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-    height: "350px", 
+    padding: "32px",
+    borderRadius: 12,
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
+    border: "1px solid #e2e8f0",
+    height: "380px",
     display: "flex",
     flexDirection: "column",
-    width: "100%", // Ensures cards fill their grid columns
+    width: "100%",
     boxSizing: "border-box",
+  },
+  checkboxLabel: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    cursor: "pointer",
+    fontSize: "15px",
+    color: "#334155", // Professional Slate 700
+    userSelect: "none" as const,
+  },
+
+  checkboxInput: {
+    appearance: "none" as const, // CRITICAL: This hides the default browser look
+    width: "18px",
+    height: "18px",
+    border: "1px solid #cbd5e1", // Login page border color
+    borderRadius: "4px",
+    background: "#ffffff", // Pure white background like your textboxes
+    cursor: "pointer",
+    outline: "none",
+    transition: "all 0.2s ease",
+    display: "grid",
+    placeContent: "center",
+  },
+
+  checkboxChecked: {
+    background: "#0f172a", // Navy background when active
+    borderColor: "#0f172a",
+    // This adds a clean white checkmark SVG
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E")`,
+    backgroundSize: "80%",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
   },
 
   scrollableContent: {
@@ -172,19 +231,20 @@ td: {
 
   /* ---------- Clean UI Refinements ---------- */
   prescriptionCard: {
-    width: "100%",           
+    width: "100%",
     background: "#fff",
-    padding: "24px",
-    borderRadius: "8px",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
-    boxSizing: "border-box", // Prevents padding from breaking the 100% width
-    margin: "0 0 20px 0",
+    padding: "32px",
+    borderRadius: 12,
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
+    border: "1px solid #e2e8f0",
+    boxSizing: "border-box",
+    margin: "0 0 24px 0",
   },
 
   cleanTable: {
     width: "100%",
-    borderCollapse: "separate",
-    borderSpacing: "0 8px", // Gives rows breathing room
+    borderCollapse: "separate" as const,
+    borderSpacing: "0 12px",
   },
 
   tableHeader: {
@@ -199,10 +259,10 @@ td: {
   noteArea: {
     width: "100%",
     height: "220px",
-    padding: "12px",
-    borderRadius: "8px",
+    padding: "16px",
+    borderRadius: "12px",
     border: "1px solid #e2e8f0",
-    background: "#fdfdfd", 
+    background: "#fcfcfc",
     color: "#334155",
     fontSize: "14px",
     resize: "none",
@@ -219,13 +279,29 @@ td: {
   },
 
   primaryBtn: {
-    height: 40,
-    padding: "0 20px",
-    background: "#2563eb",
+    height: 42,
+    padding: "0 24px",
+    background: "#0f172a",
     color: "#fff",
     border: "none",
-    borderRadius: 6,
+    borderRadius: 8,
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "background 0.2s",
   },
+  vitalInputSmall: {
+    width: "100%" as const,
+    backgroundColor: "#FFFFFF",
+    color: "#1E293B",
+    padding: "0 14px",
+    height: "42px",
+    border: "1px solid #E2E8F0",
+    borderRadius: 8,
+    fontSize: "15px",
+    outline: "none",
+    boxSizing: "border-box" as const,
+    transition: "border-color 0.2s, box-shadow 0.2s",
+  } as React.CSSProperties,
 
   /*certificates link*/
   certificateGrid: {
@@ -240,13 +316,14 @@ td: {
     display: "flex",
     alignItems: "center",
     gap: "12px",
-    padding: "12px 16px",
+    padding: "14px 18px",
     background: "#f8fafc",
     border: "1px solid #e2e8f0",
-    borderRadius: "8px",
-    color: "#2563eb",
+    borderRadius: "10px",
+    color: "#0f172a", // Darker text for links
     textDecoration: "none",
-    fontWeight: "500",
+    fontWeight: "600",
+    fontSize: "14px",
     cursor: "pointer",
     transition: "all 0.2s ease",
   },
@@ -254,21 +331,22 @@ td: {
   saveBtn: {
     background: "#16a34a",
     color: "#fff",
-    padding: "12px 36px",
+    padding: "14px 40px",
     border: "none",
-    borderRadius: 6,
-    fontSize: 15,
+    borderRadius: 8,
+    fontSize: "15px",
+    fontWeight: 600,
+    cursor: "pointer",
   },
 };
-
 
 /* ================= TYPES ================= */
 
 type Patient = {
   _id: string;
   fullName: string;
-  age: number;
-  gender: string;
+  age?: number;
+  gender?: string | number;
   dob: string;
   mobile: string;
   email: string;
@@ -278,7 +356,7 @@ type Patient = {
   doctorNotes: string;
 };
  
-/* ================= REUSABLE ================= */
+/* ================= REUSABLE ================= */  
 
 function Input({ label, name, value, onChange, ...rest }: any) {
   return (
@@ -299,11 +377,11 @@ function Input({ label, name, value, onChange, ...rest }: any) {
 
 export default function Patients() {
   const navigate = useNavigate();
-
-  /* ---------- SEARCH ---------- */
   const [searchText, setSearchText] = useState("");
   const [searched, setSearched] = useState(false);
   const [searchType, setSearchType] = useState<"name" | "mobile">("name");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [focusedArea, setFocusedArea] = useState<string | null>(null);
   const [showAddPatient, setShowAddPatient] = useState(false);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [medicines, setMedicines] = useState<string[]>([]);
@@ -450,31 +528,51 @@ useEffect(() => {
 
 
   const searchPatients = async () => {
-  if (!searchText.trim()) return;
+  if (!searchText.trim()) {
+    setPatients([]);
+    return;
+  }
 
-  setSearched(true); // 🔑 mark that search was attempted
+  setSearched(true);
 
-  const res = await fetch(
-    `${API_URL}/patients/search?${searchType}=${searchText}`
-  );
+  try {
+    const res = await fetch(
+      `${API_URL}/patients/search?${searchType}=${encodeURIComponent(searchText)}`
+    );
+    const data = await res.json();
 
-  const data = await res.json();
+    // DEBUG: Right-click your browser, select 'Inspect', and click 'Console' 
+    // to see exactly what 'data' looks like here.
+    console.log("API Response:", data);
 
-  const normalizedPatients = data.map((p: any) => {
-    const source = p.patient || p;
+    // Some APIs wrap the array in an object: { patients: [...] } 
+    // This line handles both cases.
+    const rawList = Array.isArray(data) ? data : (data.patients || []);
 
-    return {
-      _id: p._id || source._id,
-      fullName: source.fullName || source.name || "",
-      age: source.age,
-      gender: source.gender,
-      mobile: source.mobile,
-    };
-  });
+    const normalizedPatients = rawList.map((p: any) => {
+      // 1. Check if the patient info is nested inside a 'patient' object
+      const s = p.patient || p;
 
-  setPatients(normalizedPatients);
+      // 2. Try every possible name field (firstName, name, fullName)
+      const fName = s.firstName || s.name || "";
+      const lName = s.lastName || "";
+
+      return {
+        _id: p._id || s._id,
+        // 3. Combine them. If both are empty, we check for a 'fullName' property
+        fullName: (`${fName} ${lName}`).trim() || s.fullName || "Unknown Patient",
+        mobile: s.mobile || "—",
+        age: s.age || "—",
+        gender: s.gender || "—",
+      };
+    });
+
+    setPatients(normalizedPatients);
+  } catch (err) {
+    console.error("Search error:", err);
+    setPatients([]);
+  }
 };
-
  const handleChange = (e: any) => {
   const { name, value, type, checked } = e.target;
   const val = type === "checkbox" ? checked : value;
@@ -938,20 +1036,29 @@ const openSicknessCertificateForm = () => {
 
 /* ================= UI ================= */
 return (
+
   <div style={styles.page}>
     <div style={styles.container}>
       <h1 style={styles.title}>Patients</h1>
 
       {/* ================= SEARCH (Always Visible) ================= */}
       <div style={styles.fullWidthCard}>
-        <h3>Search Patient</h3>
+        <h3 style={{marginTop: 0, marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>
+          Search Patient
+        </h3>
         <div style={styles.searchRow}>
           <div style={styles.field}>
             <label>Search</label>
             <input
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              style={styles.input}
+              style={{
+                ...styles.input,
+                ...(isSearchFocused ? styles.inputFocus : {})
+              }}
+              value={searchText} // Add this
+              onChange={(e) => setSearchText(e.target.value)} // Add this
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+              placeholder="Search by Name or Mobile..."
             />
           </div>
 
@@ -1030,7 +1137,9 @@ return (
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {/* 1. PERSONAL DETAILS */}
           <div style={styles.card}>
-            <h3> Personal Details</h3>
+            <h3 style={{marginTop: 0, marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>
+              Personal Details
+            </h3>
             <div style={styles.grid3}>
               <Input label="Full Name" name="fullName" value={form.fullName} onChange={handleChange} />
               <Input label="Age" name="age" value={form.age} onChange={handleChange} />
@@ -1048,8 +1157,6 @@ return (
                 style={{ 
                   ...styles.fullTextarea, 
                   height: "80px", 
-                  background: "#333", 
-                  color: "#fff" 
                 }} 
               />
             </div>
@@ -1059,7 +1166,7 @@ return (
                 name="bloodGroup" 
                 value={form.bloodGroup} 
                 onChange={handleChange} 
-                style={{ ...styles.input, color: "#fff", background: "#333" }}
+                style={styles.input}
               >
                 <option value="">Select</option>
                 {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(bg => (
@@ -1075,7 +1182,7 @@ return (
             
             {/* Left: Allergies Card (Takes up 2 parts of the grid) */}
             <div style={{ ...styles.fixedHeightCard }}>
-              <h3>
+              <h3 style={{marginTop: 0, marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>
                 Allergies & Medical Alerts
               </h3>
               <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
@@ -1088,8 +1195,6 @@ return (
                   style={{ 
                     ...styles.fullTextarea, 
                     height: "100%", 
-                    background: "#333", // Matching your dark UI in screenshot
-                    color: "#fff" 
                   }} 
                 />
               </div>
@@ -1097,7 +1202,7 @@ return (
 
             {/* Right: Vitals Card (Takes up 1 part of the grid) */}
             <div style={styles.fixedHeightCard}>
-              <h3 style={{ textAlign: "center", marginTop: 0, marginBottom: 12 }}>Vitals</h3>
+              <h3 style={{ textAlign: "center", marginTop: 0, marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px"  }}>Vitals</h3>
               <div style={{ flex: 1, overflowY: "auto", paddingRight: "5px" }}>
                 <table style={{ ...styles.vitalsTable, width: "100%" }}>
                   <tbody>
@@ -1124,9 +1229,10 @@ return (
                             style={{
                               ...styles.vitalInputSmall, 
                               width: "100%", 
-                              background: "#333", 
-                              color: "#fff",
-                              boxSizing: "border-box"
+                              background: "#ffffff",
+                              color: "#1e293b",
+                              boxSizing: "border-box",
+                            
                             }}
                           />
                         </td>
@@ -1141,18 +1247,18 @@ return (
             </div>
           </div>  
 
-          {/* 3. NEW BLANK CARD */}
+          {/* 3. NEW BLANK CARD 
           <div style={styles.card}>
             <h3 style={{ marginBottom: 16 }}>New Section Title</h3>
             <div style={{ minHeight: '100px', border: '1px dashed #cbd5e1', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
-              {/* You can drop new content, inputs, or tables here later */}
+            
               Blank Space for Future Content
             </div>
-          </div>
+          </div>*/}
 
           {/* 4. HISTORY CARD */}
           <div style={styles.card}>
-            <h3 style={{ marginBottom: 16 }}>Medical History</h3>
+            <h3 style={{ marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>Medical History</h3>
             <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
@@ -1171,26 +1277,25 @@ return (
                 { label: "Hepatitis", name: "hepatitis" },
                 { label: "Thyroid", name: "thyroid" },
                 { label: "Epilepsy", name: "epilepsy" },
-              ].map((item) => (
-                <label key={item.name} style={{ 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: "10px", 
-                  cursor: "pointer",
-                  fontSize: "16px" 
-                }}>
-                  <input
-                    type="checkbox"
-                    // UPDATED: Prefixed with history. to match your universal handleChange logic
-                    name={`history.${item.name}`} 
-                    checked={(form.history as any)[item.name]}
-                    // UPDATED: Use the universal handleChange that handles nested objects
-                    onChange={handleChange} 
-                    style={{ width: "18px", height: "18px" }}
-                  />
-                  {item.label}
-                </label>
-              ))}
+                ].map((item) => {
+                  const isChecked = (form.history as any)[item.name];
+
+                  return (
+                    <label key={item.name} style={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name={`history.${item.name}`}
+                        checked={isChecked}
+                        onChange={handleChange}
+                        style={{
+                          ...styles.checkboxInput,
+                          ...(isChecked ? styles.checkboxChecked : {}),
+                        }}
+                      />
+                      {item.label}
+                    </label>
+                  );
+                })}
             </div>
           </div>
 
@@ -1246,16 +1351,29 @@ return (
                             </select>
                           </div>
                         </td>
-                        {["mor", "aft", "eve", "night"].map((t) => (
-                          <td key={t} style={{ textAlign: "center" }}>
-                            <input
-                              type="checkbox"
-                              checked={(row as any)[t]}
-                              onChange={(e) => handlePrescription(index, t, e.target.checked)}
-                              style={{ cursor: "pointer", width: "16px", height: "16px" }}
-                            />
+                        {["mor", "aft", "eve", "night"].map((t) => {
+                        const isChecked = (row as any)[t];
+                        return (
+                          <td key={t} style={{ textAlign: "center", verticalAlign: "middle" }}>
+                            <div style={{ display: "flex", justifyContent: "center" }}>
+                              <label style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={(e) => handlePrescription(index, t, e.target.checked)}
+                                  style={{
+                                    ...styles.checkboxInput, // Reuses your Medical History style
+                                    ...(isChecked ? styles.checkboxChecked : {}), // Reuses the Navy/Checkmark style
+                                    width: "18px", 
+                                    height: "18px",
+                                    margin: 0
+                                  }}
+                                />
+                              </label>
+                            </div>
                           </td>
-                        ))}
+                        );
+                      })}
                       </tr>
                     ))}
                   </tbody>
@@ -1278,7 +1396,7 @@ return (
                   value={form.doctorNotes}
                   onChange={handleChange}
                   placeholder="Enter additional clinical notes or medicines prescribed elsewhere..."
-                  style={styles.noteArea}
+                  style={{ ...styles.fullTextarea} }
                 />
               </div>
             </div>
@@ -1286,7 +1404,7 @@ return (
 
           {/* 6. REFERENCE / REFERRAL CARD */}
           <div style={styles.prescriptionCard}>
-              <h3 style={{ margin: "0 0 20px 0" }}>Patient Referral</h3>
+              <h3 style={{ marginBottom: 16, borderBottom: "1px solid #eee", paddingBottom: "8px" }}>Patient Referral</h3>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                 <div>
                   <label>Refer to (Doctor/Center Name)</label>
@@ -1330,7 +1448,7 @@ return (
               <textarea
                 name="referral.reason" // This allows your universal handleChange to find it
                 placeholder="Briefly describe why the patient is being referred..."
-                style={{ ...styles.noteArea, height: "120px" }}
+                style={{ ...styles.fullTextarea, height: "120px" }}
                 value={form.referral.reason}
                 onChange={handleChange} // Use your main handler for consistency
               />
@@ -1543,7 +1661,7 @@ return (
               </div>
             </div>
 
-            {/* Part Payment Box - Adjusted for better contrast */}
+            {/* Part Payment Box - Adjusted for better contrast 
             <div style={{ marginTop: 15, padding: "12px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
               <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", color: "#475569" }}>
                 <input
@@ -1555,7 +1673,7 @@ return (
                 />
                 <span style={{ fontSize: "15px", fontWeight: 500 }}>Enable Part Payment / Credit</span>
               </label>
-            </div>
+            </div>*/}
           </div>
 
           {/* 7. CERTIFICATES LINKS (Directly below Fees card) */}
